@@ -1,4 +1,10 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 import assert from 'assert';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const assert2 = _interopRequireDefault(assert);
 
 /**
  * Param Type Parser class.
@@ -23,7 +29,7 @@ export default class ParamParser {
    * let {typeText} = ParamParser.parseParamValue(value, true, false, false);
    */
   static parseParamValue(value, type = true, name = true, desc = true) {
-    value = value.trim();
+    let newValue = value.trim();
 
     let match;
     let typeText = null;
@@ -32,51 +38,56 @@ export default class ParamParser {
 
     // e.g {number}
     if (type) {
-      const reg = /^\{([^@]*?)\}(\s+|$)/; // ``@`` is special char in ``{@link foo}``
-      match = value.match(reg);
+      // ``@`` is special char in ``{@link foo}``
+      const reg = /^\{([^@]*?)\}(\s+|$)/u;
+      match = newValue.match(reg);
       if (match) {
-        typeText = match[1];
-        value = value.replace(reg, '');
+        [, typeText] = match;
+        newValue = newValue.replace(reg, ``);
       } else {
-        typeText = '*';
+        typeText = `*`;
       }
     }
 
     // e.g. [p1=123]
     if (name) {
-      if (value.charAt(0) === '[') {
-        paramName = '';
+      if (newValue.charAt(0) === `[`) {
+        paramName = ``;
         let counter = 0;
-        for (const c of value) {
+        for (const c of newValue) {
           paramName += c;
-          if (c === '[') counter++;
-          if (c === ']') counter--;
+          if (c === `[`) counter++;
+          if (c === `]`) counter--;
           if (counter === 0) break;
         }
 
         if (paramName) {
-          value = value.substr(paramName.length).trim();
+          newValue = newValue.substring(paramName.length).trim();
         }
       } else {
-        match = value.match(/^(\S+)/);
+        match = newValue.match(/^(\S+)/u);
         if (match) {
-          paramName = match[1];
-          value = value.replace(/^\S+\s*/, '');
+          [, paramName] = match;
+          newValue = newValue.replace(/^\S+\s*/u, ``);
         }
       }
     }
 
     // e.g. this is p1 desc.
     if (desc) {
-      match = value.match(/^-?\s*((:?.|\n)*)$/m);
+      match = newValue.match(/^-?\s*((:?.|\n)*)$/mu);
       if (match) {
-        paramDesc = match[1];
+        [, paramDesc] = match;
       }
     }
 
-    assert(typeText || paramName || paramDesc, `param is invalid. param = "${value}"`);
+    (0, assert)(typeText || paramName || paramDesc, `param is invalid. param = "${newValue}"`);
 
-    return {typeText, paramName, paramDesc};
+    return {
+      paramDesc,
+      paramName,
+      typeText
+    };
   }
 
   /**
@@ -95,45 +106,51 @@ export default class ParamParser {
     const result = {};
 
     if (typeText) {
+      let newTypeText = typeText;
+
       // check nullable
-      if (typeText[0] === '?') {
+      if (newTypeText[0] === `?`) {
         result.nullable = true;
-      } else if (typeText[0] === '!') {
+      } else if (newTypeText[0] === `!`) {
         result.nullable = false;
       } else {
         result.nullable = null;
       }
-      typeText = typeText.replace(/^[?!]/, '');
+      newTypeText = newTypeText.replace(/^[?!]/u, ``);
 
       // check record and union
-      if (typeText[0] === '{') {
-        result.types = [typeText];
-      } else if (typeText[0] === '(') {
-        typeText = typeText.replace(/^[(]/, '').replace(/[)]$/, '');
-        result.types = typeText.split('|');
-      } else if (typeText.includes('|')) {
-        if (typeText.match(/<.*?\|.*?>/)) {
-          // union in generics. e.g. `Array<string|number>`
-          // hack: in this case, process this type in DocBuilder#_buildTypeDocLinkHTML
-          result.types = [typeText];
-        } else if (typeText.match(/^\.\.\.\(.*?\)/)) {
-          // union with spread. e.g. `...(string|number)`
-          // hack: in this case, process this type in DocBuilder#_buildTypeDocLinkHTML
-          result.types = [typeText];
+      if (newTypeText[0] === `{`) {
+        result.types = [newTypeText];
+      } else if (newTypeText[0] === `(`) {
+        newTypeText = newTypeText.replace(/^[(]/u, ``).replace(/[)]$/u, ``);
+        result.types = newTypeText.split(`|`);
+      } else if (newTypeText.includes(`|`)) {
+        if (newTypeText.match(/<.*?\|.*?>/u)) {
+          /*
+           * union in generics. e.g. `Array<string|number>`
+           * hack: in this case, process this type in DocBuilder#_buildTypeDocLinkHTML
+           */
+          result.types = [newTypeText];
+        } else if (newTypeText.match(/^\.\.\.\(.*?\)/u)) {
+          /*
+           * union with spread. e.g. `...(string|number)`
+           * hack: in this case, process this type in DocBuilder#_buildTypeDocLinkHTML
+           */
+          result.types = [newTypeText];
         } else {
-          result.types = typeText.split('|');
+          result.types = newTypeText.split(`|`);
         }
       } else {
-        result.types = [typeText];
+        result.types = [newTypeText];
       }
 
-      if (typeText.indexOf('...') === 0) {
+      if (newTypeText.indexOf(`...`) === 0) {
         result.spread = true;
       } else {
         result.spread = false;
       }
     } else {
-      result.types = [''];
+      result.types = [``];
     }
 
     if (result.types.some(t => !t)) {
@@ -141,23 +158,24 @@ export default class ParamParser {
     }
 
     if (paramName) {
+      let newParamName = paramName;
       // check optional
-      if (paramName[0] === '[') {
+      if (newParamName[0] === `[`) {
         result.optional = true;
-        paramName = paramName.replace(/^[[]/, '').replace(/[\]]$/, '');
+        newParamName = newParamName.replace(/^[[]/u, ``).replace(/[\]]$/u, ``);
       } else {
         result.optional = false;
       }
 
       // check default value
-      const pair = paramName.split('=');
+      const pair = newParamName.split(`=`);
       if (pair.length === 2) {
-        result.defaultValue = pair[1];
+        [, result.defaultValue] = pair;
         try {
           const raw = JSON.parse(pair[1]);
           result.defaultRaw = raw;
-        } catch (e) {
-          result.defaultRaw = pair[1];
+        } catch {
+          [, result.defaultRaw] = pair;
         }
       }
 
@@ -169,3 +187,4 @@ export default class ParamParser {
     return result;
   }
 }
+// exports.default = ParamParser;

@@ -1,0 +1,15 @@
+{
+    "folders": [
+        {
+            // Source Code
+            "name": "Quellcode",
+            "path": "D:/workspace/JavaScript/ESDocumentor"
+        }
+    ],
+    "settings": {
+        "eslint.enable": true,
+        "eslint.options": {
+            "overrideConfigFile": ".vscode/.eslintrc.json",
+        },
+    }
+}

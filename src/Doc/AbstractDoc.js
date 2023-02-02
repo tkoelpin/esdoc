@@ -1,15 +1,38 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
+import babelGenerator from 'babel-generator';
 import path from 'path';
-import ParamParser from '../Parser/ParamParser.js';
+
+import ASTNodeContainer from '../Util/ASTNodeContainer.js';
 import ASTUtil from '../Util/ASTUtil.js';
 import InvalidCodeLogger from '../Util/InvalidCodeLogger.js';
-import ASTNodeContainer from '../Util/ASTNodeContainer.js';
-import babelGenerator from 'babel-generator';
+import ParamParser from '../Parser/ParamParser.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const babelGenerator2 = _interopRequireDefault(babelGenerator);
+// const path2 = _interopRequireDefault(path);
+
+// const _ParamParser2 = _interopRequireDefault(_ParamParser);
+// const _ASTUtil2 = _interopRequireDefault(_ASTUtil);
+// const _InvalidCodeLogger2 = _interopRequireDefault(_InvalidCodeLogger);
+// const _ASTNodeContainer2 = _interopRequireDefault(_ASTNodeContainer);
 
 /**
  * Abstract Doc Class.
  * @todo rename this class name.
  */
 export default class AbstractDoc {
+  $ast;
+
+  $node;
+
+  $pathResolver;
+
+  $commentTags;
+
+  $value;
+
   /**
    * create instance.
    * @param {AST} ast - this is AST that contains this doc.
@@ -18,74 +41,76 @@ export default class AbstractDoc {
    * @param {Tag[]} commentTags - this is tags that self node has.
    */
   constructor(ast, node, pathResolver, commentTags = []) {
-    this._ast = ast;
-    this._node = node;
-    this._pathResolver = pathResolver;
-    this._commentTags = commentTags;
-    this._value = {};
+    this.$ast = ast;
+    this.$node = node;
+    this.$pathResolver = pathResolver;
+    this.$commentTags = commentTags;
+    this.$value = {};
 
-    Reflect.defineProperty(this._node, 'doc', {value: this});
+    Reflect.defineProperty(this.$node, `doc`, {value: this});
 
-    this._value.__docId__ = ASTNodeContainer.addNode(node);
+    this.$value.__docId__ = ASTNodeContainer.addNode(node);
 
-    this._apply();
+    this.$apply();
   }
 
   /** @type {DocObject[]} */
   get value() {
-    return JSON.parse(JSON.stringify(this._value));
+    return JSON.parse(JSON.stringify(this.$value));
   }
 
   /**
    * apply doc comment.
    * @protected
    */
-  _apply() {
-    this._$kind();
-    this._$variation();
-    this._$name();
-    this._$memberof();
-    this._$member();
-    this._$content();
-    this._$generator();
-    this._$async();
+  $apply() {
+    this.$kind();
+    this.$variation();
+    this.$name();
+    this.$memberof();
+    this.$member();
+    this.$content();
+    this.$generator();
+    this.$async();
 
-    this._$static();
-    this._$longname();
-    this._$access();
-    this._$export();
-    this._$importPath();
-    this._$importStyle();
-    this._$desc();
-    this._$example();
-    this._$see();
-    this._$lineNumber();
-    this._$deprecated();
-    this._$experimental();
-    this._$since();
-    this._$version();
-    this._$todo();
-    this._$ignore();
-    this._$pseudoExport();
-    this._$undocument();
-    this._$unknown();
-    this._$param();
-    this._$property();
-    this._$return();
-    this._$type();
-    this._$abstract();
-    this._$override();
-    this._$throws();
-    this._$emits();
-    this._$listens();
-    this._$decorator();
+    this.$static();
+    this.$longname();
+    this.$access();
+    this.$export();
+    this.$importPath();
+    this.$importStyle();
+    this.$desc();
+    this.$example();
+    this.$see();
+    this.$lineNumber();
+    this.$deprecated();
+    this.$experimental();
+    this.$since();
+    this.$version();
+    this.$todo();
+    this.$ignore();
+    this.$pseudoExport();
+    this.$undocument();
+    this.$unknown();
+    this.$param();
+    this.$property();
+    this.$return();
+    this.$type();
+    this.$abstract();
+    this.$override();
+    this.$throws();
+    this.$emits();
+    this.$listens();
+    this.$decorator();
   }
 
   /**
    * decide `kind`.
    * @abstract
    */
-  _$kind() {}
+  $kind() {
+    throw new Error(`Method '$kind()' must be implemented.`);
+  }
 
   /** for @_variation */
   /**
@@ -93,66 +118,79 @@ export default class AbstractDoc {
    * @todo implements `@variation`.
    * @abstract
    */
-  _$variation() {}
+  $variation() {
+    throw new Error(`Method '$variation()' must be implemented.`);
+  }
 
   /**
    * decide `name`
    * @abstract
    */
-  _$name() {}
+  $name() {
+    throw new Error(`Method '$name()' must be implemented.`);
+  }
 
   /**
    * decide `memberof`.
    * @abstract
    */
-  _$memberof() {}
+  $memberof() {
+    throw new Error(`Method '$memberof()' must be implemented.`);
+  }
 
   /**
    * decide `member`.
    * @abstract
    */
-  _$member() {}
+  $member() {
+    throw new Error(`Method '$member()' must be implemented.`);
+  }
 
   /**
    * decide `content`.
    * @abstract
    */
-  _$content() {}
+  $content() {
+    throw new Error(`Method '$content()' must be implemented.`);
+  }
 
   /**
    * decide `generator`.
    * @abstract
    */
-  _$generator() {}
+  $generator() {
+    throw new Error(`Method '$generator()' must be implemented.`);
+  }
 
   /**
    * decide `async`.
    * @abstract
    */
-  _$async() {}
+  $async() {
+    throw new Error(`Method '$async()' must be implemented.`);
+  }
 
   /**
    * decide `static`.
    */
-  _$static() {
-    if ('static' in this._node) {
-      this._value.static = this._node.static;
+  $static() {
+    if (`static` in this.$node) {
+      this.$value[`static`] = this.$node[`static`];
     } else {
-      this._value.static = true;
+      this.$value[`static`] = true;
     }
   }
 
   /**
    * decide `longname`.
    */
-  _$longname() {
-    const memberof = this._value.memberof;
-    const name = this._value.name;
-    const scope = this._value.static ? '.' : '#';
-    if (memberof.includes('~')) {
-      this._value.longname = `${memberof}${scope}${name}`;
+  $longname() {
+    const {memberof, name} = this.$value;
+    const scope = this.$value[`static`] ? `.` : `#`;
+    if (memberof.includes(`~`)) {
+      this.$value.longname = `${memberof}${scope}${name}`;
     } else {
-      this._value.longname = `${memberof}~${name}`;
+      this.$value.longname = `${memberof}~${name}`;
     }
   }
 
@@ -160,145 +198,158 @@ export default class AbstractDoc {
    * decide `access`.
    * process also @public, @private, @protected and @package.
    */
-  _$access() {
-    const tag = this._find(['@access', '@public', '@private', '@protected', '@package']);
+  $access() {
+    const tag = this.find([`@access`, `@public`, `@private`, `@protected`, `@package`]);
     if (tag) {
       let access;
       /* eslint-disable max-statements-per-line */
       switch (tag.tagName) {
-        case '@access': access = tag.tagValue; break;
-        case '@public': access = 'public'; break;
-        case '@protected': access = 'protected'; break;
-        case '@package': access = 'package'; break;
-        case '@private': access = 'private'; break;
+        case `@access`:
+          access = tag.tagValue; break;
+        case `@public`:
+          access = `public`; break;
+        case `@protected`:
+          access = `protected`; break;
+        case `@package`:
+          access = `package`; break;
+        case `@private`:
+          access = `private`; break;
         default:
           throw new Error(`unexpected token: ${tag.tagName}`);
       }
 
-      this._value.access = access;
+      this.$value.access = access;
     } else {
-      this._value.access = null;
+      this.$value.access = null;
     }
   }
 
   /**
    * avoid unknown tag.
    */
-  _$public() {}
+  $public() {
+    throw new Error(`Method '$public()' must be implemented.`);
+  }
 
   /**
    * avoid unknown tag.
    */
-  _$protected() {}
+  $protected() {
+    throw new Error(`Method '$protected()' must be implemented.`);
+  }
 
   /**
    * avoid unknown tag.
    */
-  _$private() {}
+  $private() {
+    throw new Error(`Method '$private()' must be implemented.`);
+  }
 
   /**
    * avoid unknown tag.
    */
-  _$package() {}
+  $package() {
+    throw new Error(`Method '$package()' must be implemented.`);
+  }
 
   /**
    * decide `export`.
    */
-  _$export() {
-    let parent = this._node.parent;
+  $export() {
+    let {parent} = this.$node;
     while (parent) {
-      if (parent.type === 'ExportDefaultDeclaration') {
-        this._value.export = true;
+      if (parent.type === `ExportDefaultDeclaration`) {
+        this.$value[`export`] = true;
         return;
-      } else if (parent.type === 'ExportNamedDeclaration') {
-        this._value.export = true;
+      } else if (parent.type === `ExportNamedDeclaration`) {
+        this.$value[`export`] = true;
         return;
       }
 
       parent = parent.parent;
     }
 
-    this._value.export = false;
+    this.$value[`export`] = false;
   }
 
   /**
    * decide `importPath`.
    */
-  _$importPath() {
-    this._value.importPath = this._pathResolver.importPath;
+  $importPath() {
+    this.$value.importPath = this.$pathResolver.importPath;
   }
 
   /**
    * decide `importStyle`.
    */
-  _$importStyle() {
-    if (this._node.__PseudoExport__) {
-      this._value.importStyle = null;
+  $importStyle() {
+    if (this.$node.__PseudoExport__) {
+      this.$value.importStyle = null;
       return;
     }
 
-    let parent = this._node.parent;
-    const name = this._value.name;
+    let {parent} = this.$node;
+    const {name} = this.$value;
     while (parent) {
-      if (parent.type === 'ExportDefaultDeclaration') {
-        this._value.importStyle = name;
+      if (parent.type === `ExportDefaultDeclaration`) {
+        this.$value.importStyle = name;
         return;
-      } else if (parent.type === 'ExportNamedDeclaration') {
-        this._value.importStyle = `{${name}}`;
+      } else if (parent.type === `ExportNamedDeclaration`) {
+        this.$value.importStyle = `{${name}}`;
         return;
       }
       parent = parent.parent;
     }
 
-    this._value.importStyle = null;
+    this.$value.importStyle = null;
   }
 
   /**
    * decide `description`.
    */
-  _$desc() {
-    this._value.description = this._findTagValue(['@desc']);
+  $desc() {
+    this.$value.description = this.findTagValue([`@desc`]);
   }
 
   /**
    * decide `examples`.
    */
-  _$example() {
-    const tags = this._findAll(['@example']);
+  $example() {
+    const tags = this.findAll([`@example`]);
     if (!tags) return;
     if (!tags.length) return;
 
-    this._value.examples = [];
+    this.$value.examples = [];
     for (const tag of tags) {
-      this._value.examples.push(tag.tagValue);
+      this.$value.examples.push(tag.tagValue);
     }
   }
 
   /**
    * decide `see`.
    */
-  _$see() {
-    const tags = this._findAll(['@see']);
+  $see() {
+    const tags = this.findAll([`@see`]);
     if (!tags) return;
     if (!tags.length) return;
 
-    this._value.see = [];
+    this.$value.see = [];
     for (const tag of tags) {
-      this._value.see.push(tag.tagValue);
+      this.$value.see.push(tag.tagValue);
     }
   }
 
   /**
    * decide `lineNumber`.
    */
-  _$lineNumber() {
-    const tag = this._find(['@lineNumber']);
+  $lineNumber() {
+    const tag = this.find([`@lineNumber`]);
     if (tag) {
-      this._value.lineNumber = parseInt(tag.tagValue, 10);
+      this.$value.lineNumber = parseInt(tag.tagValue, 10);
     } else {
-      const node = this._node;
+      const node = this.$node;
       if (node.loc) {
-        this._value.lineNumber = node.loc.start.line;
+        this.$value.lineNumber = node.loc.start.line;
       }
     }
   }
@@ -306,13 +357,13 @@ export default class AbstractDoc {
   /**
    * decide `deprecated`.
    */
-  _$deprecated() {
-    const tag = this._find(['@deprecated']);
+  $deprecated() {
+    const tag = this.find([`@deprecated`]);
     if (tag) {
       if (tag.tagValue) {
-        this._value.deprecated = tag.tagValue;
+        this.$value.deprecated = tag.tagValue;
       } else {
-        this._value.deprecated = true;
+        this.$value.deprecated = true;
       }
     }
   }
@@ -320,13 +371,13 @@ export default class AbstractDoc {
   /**
    * decide `experimental`.
    */
-  _$experimental() {
-    const tag = this._find(['@experimental']);
+  $experimental() {
+    const tag = this.find([`@experimental`]);
     if (tag) {
       if (tag.tagValue) {
-        this._value.experimental = tag.tagValue;
+        this.$value.experimental = tag.tagValue;
       } else {
-        this._value.experimental = true;
+        this.$value.experimental = true;
       }
     }
   }
@@ -334,32 +385,32 @@ export default class AbstractDoc {
   /**
    * decide `since`.
    */
-  _$since() {
-    const tag = this._find(['@since']);
+  $since() {
+    const tag = this.find([`@since`]);
     if (tag) {
-      this._value.since = tag.tagValue;
+      this.$value.since = tag.tagValue;
     }
   }
 
   /**
    * decide `version`.
    */
-  _$version() {
-    const tag = this._find(['@version']);
+  $version() {
+    const tag = this.find([`@version`]);
     if (tag) {
-      this._value.version = tag.tagValue;
+      this.$value.version = tag.tagValue;
     }
   }
 
   /**
    * decide `todo`.
    */
-  _$todo() {
-    const tags = this._findAll(['@todo']);
+  $todo() {
+    const tags = this.findAll([`@todo`]);
     if (tags) {
-      this._value.todo = [];
+      this.$value.todo = [];
       for (const tag of tags) {
-        this._value.todo.push(tag.tagValue);
+        this.$value.todo.push(tag.tagValue);
       }
     }
   }
@@ -367,137 +418,137 @@ export default class AbstractDoc {
   /**
    * decide `ignore`.
    */
-  _$ignore() {
-    const tag = this._find(['@ignore']);
+  $ignore() {
+    const tag = this.find([`@ignore`]);
     if (tag) {
-      this._value.ignore = true;
+      this.$value.ignore = true;
     }
   }
 
   /**
    * decide `pseudoExport`.
    */
-  _$pseudoExport() {
-    if (this._node.__PseudoExport__) {
-      this._value.pseudoExport = true;
+  $pseudoExport() {
+    if (this.$node.__PseudoExport__) {
+      this.$value.pseudoExport = true;
     }
   }
 
   /**
    * decide `undocument` with internal tag.
    */
-  _$undocument() {
-    const tag = this._find(['@undocument']);
+  $undocument() {
+    const tag = this.find([`@undocument`]);
     if (tag) {
-      this._value.undocument = true;
+      this.$value.undocument = true;
     }
   }
 
   /**
    * decide `unknown`.
    */
-  _$unknown() {
-    for (const tag of this._commentTags) {
-      const methodName = tag.tagName.replace(/^[@]/, '_$');
+  $unknown() {
+    for (const tag of this.$commentTags) {
+      const methodName = tag.tagName.replace(/^[@]/u, `_$`);
       if (this[methodName]) continue;
 
-      if (!this._value.unknown) this._value.unknown = [];
-      this._value.unknown.push(tag);
+      if (!this.$value.unknown) this.$value.unknown = [];
+      this.$value.unknown.push(tag);
     }
   }
 
   /**
    * decide `param`.
    */
-  _$param() {
-    const values = this._findAllTagValues(['@param']);
+  $param() {
+    const values = this.findAllTagValues([`@param`]);
     if (!values) return;
 
-    this._value.params = [];
+    this.$value.params = [];
     for (const value of values) {
       const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value);
       if (!typeText || !paramName) {
-        InvalidCodeLogger.show(this._pathResolver.fileFullPath, this._node);
+        InvalidCodeLogger.show(this.$pathResolver.fileFullPath, this.$node);
         continue;
       }
       const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-      this._value.params.push(result);
+      this.$value.params.push(result);
     }
   }
 
   /**
    * decide `return`.
    */
-  _$return() {
-    const value = this._findTagValue(['@return', '@returns']);
+  $return() {
+    const value = this.findTagValue([`@return`, `@returns`]);
     if (!value) return;
 
     const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value, true, false, true);
     const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-    this._value.return = result;
+    this.$value[`return`] = result;
   }
 
   /**
    * decide `property`.
    */
-  _$property() {
-    const values = this._findAllTagValues(['@property']);
+  $property() {
+    const values = this.findAllTagValues([`@property`]);
     if (!values) return;
 
-    this._value.properties = [];
+    this.$value.properties = [];
     for (const value of values) {
       const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value);
       const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-      this._value.properties.push(result);
+      this.$value.properties.push(result);
     }
   }
 
   /**
    * decide `type`.
    */
-  _$type() {
-    const value = this._findTagValue(['@type']);
+  $type() {
+    const value = this.findTagValue([`@type`]);
     if (!value) return;
 
     const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value, true, false, false);
     const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-    this._value.type = result;
+    this.$value.type = result;
   }
 
   /**
    * decide `abstract`.
    */
-  _$abstract() {
-    const tag = this._find(['@abstract']);
+  $abstract() {
+    const tag = this.find([`@abstract`]);
     if (tag) {
-      this._value.abstract = true;
+      this.$value[`abstract`] = true;
     }
   }
 
   /**
    * decide `override`.
    */
-  _$override() {
-    const tag = this._find(['@override']);
+  $override() {
+    const tag = this.find([`@override`]);
     if (tag) {
-      this._value.override = true;
+      this.$value.override = true;
     }
   }
 
   /**
    * decide `throws`.
    */
-  _$throws() {
-    const values = this._findAllTagValues(['@throws']);
+  $throws() {
+    const values = this.findAllTagValues([`@throws`]);
     if (!values) return;
 
-    this._value.throws = [];
+    this.$value[`throws`] = [];
     for (const value of values) {
       const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value, true, false, true);
       const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-      this._value.throws.push({
-        types: result.types,
-        description: result.description
+      this.$value[`throws`].push({
+        description: result.description,
+        types:       result.types
       });
     }
   }
@@ -505,17 +556,17 @@ export default class AbstractDoc {
   /**
    * decide `emits`.
    */
-  _$emits() {
-    const values = this._findAllTagValues(['@emits']);
+  $emits() {
+    const values = this.findAllTagValues([`@emits`]);
     if (!values) return;
 
-    this._value.emits = [];
+    this.$value.emits = [];
     for (const value of values) {
       const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value, true, false, true);
       const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-      this._value.emits.push({
-        types: result.types,
-        description: result.description
+      this.$value.emits.push({
+        description: result.description,
+        types:       result.types
       });
     }
   }
@@ -523,17 +574,17 @@ export default class AbstractDoc {
   /**
    * decide `listens`.
    */
-  _$listens() {
-    const values = this._findAllTagValues(['@listens']);
+  $listens() {
+    const values = this.findAllTagValues([`@listens`]);
     if (!values) return;
 
-    this._value.listens = [];
+    this.$value.listens = [];
     for (const value of values) {
       const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value, true, false, true);
       const result = ParamParser.parseParam(typeText, paramName, paramDesc);
-      this._value.listens.push({
-        types: result.types,
-        description: result.description
+      this.$value.listens.push({
+        description: result.description,
+        types:       result.types
       });
     }
   }
@@ -541,29 +592,29 @@ export default class AbstractDoc {
   /**
    * decide `decorator`.
    */
-  _$decorator() {
-    if (!this._node.decorators) return;
+  $decorator() {
+    if (!this.$node.decorators) return;
 
-    this._value.decorators = [];
-    for (const decorator of this._node.decorators) {
+    this.$value.decorators = [];
+    for (const decorator of this.$node.decorators) {
       const value = {};
       switch (decorator.expression.type) {
-        case 'Identifier':
+        case `Identifier`:
           value.name = decorator.expression.name;
           value.arguments = null;
           break;
-        case 'CallExpression':
-          value.name = babelGenerator(decorator.expression).code.replace(/[(][\S\s.]*/, '');
-          value.arguments = babelGenerator(decorator.expression).code.replace(/^[^(]+/, '');
+        case `CallExpression`:
+          value.name = (0, babelGenerator)(decorator.expression).code.replace(/[(][\S\s.]*/u, ``);
+          value.arguments = (0, babelGenerator)(decorator.expression).code.replace(/^[^(]+/u, ``);
           break;
-        case 'MemberExpression':
-          value.name = babelGenerator(decorator.expression).code.replace(/[(][\S\s.]*/, '');
+        case `MemberExpression`:
+          value.name = (0, babelGenerator)(decorator.expression).code.replace(/[(][\S\s.]*/u, ``);
           value.arguments = null;
           break;
         default:
           throw new Error(`unknown decorator expression type: ${decorator.expression.type}`);
       }
-      this._value.decorators.push(value);
+      this.$value.decorators.push(value);
     }
   }
 
@@ -573,17 +624,13 @@ export default class AbstractDoc {
    * @returns {Tag[]|null} found tags.
    * @private
    */
-  _findAll(names) {
+  findAll(names) {
     const results = [];
-    for (const tag of this._commentTags) {
+    for (const tag of this.$commentTags) {
       if (names.includes(tag.tagName)) results.push(tag);
     }
 
-    if (results.length) {
-      return results;
-    } else {
-      return null;
-    }
+    return results.length ? results : null;
   }
 
   /**
@@ -592,13 +639,9 @@ export default class AbstractDoc {
    * @returns {Tag|null} found tag.
    * @protected
    */
-  _find(names) {
-    const results = this._findAll(names);
-    if (results && results.length) {
-      return results[results.length - 1];
-    } else {
-      return null;
-    }
+  find(names) {
+    const results = this.findAll(names);
+    return results && results.length ? results[results.length - 1] : null;
   }
 
   /**
@@ -607,8 +650,8 @@ export default class AbstractDoc {
    * @returns {*[]|null} found values.
    * @private
    */
-  _findAllTagValues(names) {
-    const tags = this._findAll(names);
+  findAllTagValues(names) {
+    const tags = this.findAll(names);
     if (!tags) return null;
 
     const results = [];
@@ -625,13 +668,9 @@ export default class AbstractDoc {
    * @returns {*|null} found value.
    * @private
    */
-  _findTagValue(names) {
-    const tag = this._find(names);
-    if (tag) {
-      return tag.tagValue;
-    } else {
-      return null;
-    }
+  findTagValue(names) {
+    const tag = this.find(names);
+    return tag ? tag.tagValue : null;
   }
 
   /**
@@ -641,20 +680,22 @@ export default class AbstractDoc {
    * @returns {string} resolved name.
    * @private
    */
-  _resolveLongname(name) {
-    let importPath = ASTUtil.findPathInImportDeclaration(this._ast, name);
+  resolveLongname(name) {
+    let longname;
+
+    let importPath = ASTUtil.findPathInImportDeclaration(this.$ast, name);
     if (!importPath) return name;
 
-    if (importPath.charAt(0) === '.' || importPath.charAt(0) === '/') {
-      if (!path.extname(importPath)) importPath += '.js';
+    if (importPath.charAt(0) === `.` || importPath.charAt(0) === `/`) {
+      if (!path.extname(importPath)) importPath += `.js`;
 
-      const resolvedPath = this._pathResolver.resolve(importPath);
-      const longname = `${resolvedPath}~${name}`;
-      return longname;
+      const resolvedPath = this.$pathResolver.resolve(importPath);
+      longname = `${resolvedPath}~${name}`;
     } else {
-      const longname = `${importPath}~${name}`;
-      return longname;
+      longname = `${importPath}~${name}`;
     }
+
+    return longname;
   }
 
   /**
@@ -664,18 +705,18 @@ export default class AbstractDoc {
    * @returns {string} flatten property.
    * @private
    */
-  _flattenMemberExpression(node) {
+  flattenMemberExpression(node) {
     const results = [];
     let target = node;
 
     while (target) {
-      if (target.type === 'ThisExpression') {
-        results.push('this');
+      if (target.type === `ThisExpression`) {
+        results.push(`this`);
         break;
-      } else if (target.type === 'Identifier') {
+      } else if (target.type === `Identifier`) {
         results.push(target.name);
         break;
-      } else if (target.type === 'CallExpression') {
+      } else if (target.type === `CallExpression`) {
         results.push(target.callee.name);
         break;
       } else {
@@ -684,7 +725,7 @@ export default class AbstractDoc {
       }
     }
 
-    return results.reverse().join('.');
+    return results.reverse().join(`.`);
   }
 
   /**
@@ -693,20 +734,21 @@ export default class AbstractDoc {
    * @returns {string} found class long name.
    * @private
    */
-  _findClassLongname(className) {
+  findClassLongname(className) {
     // find in same file.
-    for (const node of this._ast.program.body) {
-      if (!['ExportDefaultDeclaration', 'ExportNamedDeclaration'].includes(node.type)) continue;
-      if (node.declaration && node.declaration.type === 'ClassDeclaration' && node.declaration.id.name === className) {
-        return `${this._pathResolver.filePath}~${className}`;
+    for (const node of this.$ast.program.body) {
+      if (![`ExportDefaultDeclaration`, `ExportNamedDeclaration`].includes(node.type)) continue;
+      if (node.declaration && node.declaration.type === `ClassDeclaration` && node.declaration.id.name === className) {
+        return `${this.$pathResolver.filePath}~${className}`;
       }
     }
 
     // find in import.
-    const importPath = ASTUtil.findPathInImportDeclaration(this._ast, className);
-    if (importPath) return this._resolveLongname(className);
+    const importPath = ASTUtil.findPathInImportDeclaration(this.$ast, className);
+    if (importPath) return this.resolveLongname(className);
 
     // find in external
     return className;
   }
 }
+// exports.default = AbstractDoc;

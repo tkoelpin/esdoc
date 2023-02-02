@@ -1,9 +1,21 @@
 #!/usr/bin/env node
-import fs from 'fs';
-import path from 'path';
+
+// Object.defineProperty(exports, `__esModule`, {value: true});
+
+import fs from 'node:fs';
 import minimist from 'minimist';
+import path from 'node:path';
+
 import ESDoc from './ESDoc.js';
 import NPMUtil from './Util/NPMUtil.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const _ESDoc2 = _interopRequireDefault(_ESDoc);
+// const fs2 = _interopRequireDefault(fs);
+// const minimist2 = _interopRequireDefault(minimist);
+// const _NPMUtil2 = _interopRequireDefault(_NPMUtil);
+// const path2 = _interopRequireDefault(path);
 
 /**
  * Command Line Interface for ESDoc.
@@ -13,21 +25,23 @@ import NPMUtil from './Util/NPMUtil.js';
  * cli.exec();
  */
 export default class ESDocCLI {
+  /** @type {ESDocCLIArgv} */
+  #argv;
+
   /**
    * Create instance.
    * @param {Object} argv - this is node.js argv(``process.argv``)
    */
   constructor(argv) {
-    /** @type {ESDocCLIArgv} */
-    this._argv = minimist(argv.slice(2));
+    this.#argv = minimist(argv.slice(2));
 
-    if (this._argv.h || this._argv.help) {
-      this._showHelp();
+    if (this.#argv.h || this.#argv.help) {
+      this.#showHelp();
       process.exit(0);
     }
 
-    if (this._argv.v || this._argv.version) {
-      this._showVersion();
+    if (this.#argv.v || this.#argv.version) {
+      this.#showVersion();
       process.exit(0);
     }
   }
@@ -36,19 +50,13 @@ export default class ESDocCLI {
    * execute to generate document.
    */
   exec() {
-    let config;
-
-    const configPath = this._findConfigFilePath();
-    if (configPath) {
-      config = this._createConfigFromJSONFile(configPath);
-    } else {
-      config = this._createConfigFromPackageJSON();
-    }
-
+    const configPath = this.#findConfigFilePath();
+    let config = configPath ? this.#loadConfigFromFile(configPath) : this.#loadConfigFromPackageJSON();
+    
     if (config) {
       ESDoc.generate(config);
     } else {
-      this._showHelp();
+      this.#showHelp();
       process.exit(1);
     }
   }
@@ -57,32 +65,28 @@ export default class ESDocCLI {
    * show help of ESDoc
    * @private
    */
-  _showHelp() {
-    console.log('Usage: esdoc [-c esdoc.json]');
-    console.log('');
-    console.log('Options:');
-    console.log('  -c', 'specify config file');
-    console.log('  -h', 'output usage information');
-    console.log('  -v', 'output the version number');
-    console.log('');
-    console.log('ESDoc finds configuration by the order:');
-    console.log('  1. `-c your-esdoc.json`');
-    console.log('  2. `.esdoc.json` in current directory');
-    console.log('  3. `.esdoc.js` in current directory');
-    console.log('  4. `esdoc` property in package.json');
+  #showHelp() {
+    console.log(`Usage: esdoc [-c esdoc.json]`);
+    console.log(``);
+    console.log(`Options:`);
+    console.log(`  -c`, `specify config file`);
+    console.log(`  -h`, `output usage information`);
+    console.log(`  -v`, `output the version number`);
+    console.log(``);
+    console.log(`ESDoc finds configuration by the order:`);
+    console.log(`  1. '-c your-esdoc.json'`);
+    console.log(`  2. '.esdoc.json' in current directory`);
+    console.log(`  3. '.esdoc.js' in current directory`);
+    console.log(`  4. 'esdoc' property in package.json`);
   }
 
   /**
    * show version of ESDoc
    * @private
    */
-  _showVersion() {
+  #showVersion() {
     const packageObj = NPMUtil.findPackage();
-    if (packageObj) {
-      console.log(packageObj.version);
-    } else {
-      console.log('0.0.0');
-    }
+    console.log(packageObj ? packageObj.version : `0.0.0`);    
   }
 
   /**
@@ -90,26 +94,17 @@ export default class ESDocCLI {
    * @returns {string|null} config file path.
    * @private
    */
-  _findConfigFilePath() {
-    if (this._argv.c) {
-      return this._argv.c;
-    }
-
-    try {
-      const filePath = path.resolve('./.esdoc.json');
-      fs.readFileSync(filePath);
-      return filePath;
-    } catch (e) {
-      // ignore
-    }
-
-    try {
-      const filePath = path.resolve('./.esdoc.js');
-      fs.readFileSync(filePath);
-      return filePath;
-    } catch (e) {
-      // ignore
-    }
+  #findConfigFilePath() {
+    if (this.#argv.c) return this.#argv.c;
+    
+    [`./.esdoc.json`, `./.esdoc.js`].forEach(filePath => {
+      try {
+        const absFilePath = path.resolve(filePath);
+        if (fs.existsSync(absFilePath)) return absFilePath;
+      } catch {
+        // ignore
+      }
+    });
 
     return null;
   }
@@ -120,17 +115,22 @@ export default class ESDocCLI {
    * @return {ESDocConfig} config object.
    * @private
    */
-  _createConfigFromJSONFile(configFilePath) {
-    configFilePath = path.resolve(configFilePath);
-    const ext = path.extname(configFilePath);
-    if (ext === '.js') {
+  #loadConfigFromFile(configFilePath) {
+    const absConfigFilePath = path.resolve(configFilePath);
+    const ext = path.extname(absConfigFilePath);
+
+    let result;
+
+    if (ext === `.js`) {
       /* eslint-disable global-require */
-      return require(configFilePath);
+      result = require(absConfigFilePath);
     } else {
-      const configJSON = fs.readFileSync(configFilePath, {encode: 'utf8'});
+      const configJSON = fs.readFileSync(absConfigFilePath, {encode: `utf8`});
       const config = JSON.parse(configJSON);
-      return config;
+      result = config;
     }
+
+    return result;
   }
 
   /**
@@ -138,13 +138,13 @@ export default class ESDocCLI {
    * @return {ESDocConfig|null} config object.
    * @private
    */
-  _createConfigFromPackageJSON() {
+  #loadConfigFromPackageJSON() {
     try {
-      const filePath = path.resolve('./package.json');
-      const packageJSON = fs.readFileSync(filePath, 'utf8').toString();
+      const filePath = path.resolve(`./package.json`);
+      const packageJSON = fs.readFileSync(filePath, `utf8`).toString();
       const packageObj = JSON.parse(packageJSON);
       return packageObj.esdoc;
-    } catch (e) {
+    } catch {
       // ignore
     }
 
@@ -153,8 +153,11 @@ export default class ESDocCLI {
 }
 
 // if this file is directory executed, work as CLI.
+// exports.default = ESDocCLI;
+
 const executedFilePath = fs.realpathSync(process.argv[1]);
-if (executedFilePath === __filename) {
+const filePath = path.normalize(import.meta.url.replace(`file:///`, ``));
+if (executedFilePath === filePath) {
   const cli = new ESDocCLI(process.argv);
   cli.exec();
 }

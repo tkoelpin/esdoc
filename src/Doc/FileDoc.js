@@ -1,5 +1,14 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 import fs from 'fs';
+
 import AbstractDoc from './AbstractDoc.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// var _fs2 = _interopRequireDefault(_fs);
+
+// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
 
 /**
  * Doc Class from source file.
@@ -9,37 +18,38 @@ export default class FileDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  _apply() {
-    super._apply();
+  #apply() {
+    // super.#apply();
 
-    Reflect.deleteProperty(this._value, 'export');
-    Reflect.deleteProperty(this._value, 'importPath');
-    Reflect.deleteProperty(this._value, 'importStyle');
+    Reflect.deleteProperty(this.$value, `export`);
+    Reflect.deleteProperty(this.$value, `importPath`);
+    Reflect.deleteProperty(this.$value, `importStyle`);
   }
 
   /** specify ``file`` to kind. */
-  _$kind() {
-    super._$kind();
-    this._value.kind = 'file';
+  $kind() {
+    // super.#$kind();
+    this.$value.kind = `file`;
   }
 
   /** take out self name from file path */
-  _$name() {
-    super._$name();
-    this._value.name = this._pathResolver.filePath;
+  $name() {
+    // super.#$name();
+    this.$value.name = this.$pathResolver.filePath;
   }
 
   /** specify name to longname */
-  _$longname() {
-    this._value.longname = this._pathResolver.fileFullPath;
+  $longname() {
+    this.$value.longname = this.$pathResolver.fileFullPath;
   }
 
   /** specify file content to value.content */
-  _$content() {
-    super._$content();
+  $content() {
+    // super.#$content();
 
-    const filePath = this._pathResolver.fileFullPath;
-    const content = fs.readFileSync(filePath, {encode: 'utf8'}).toString();
-    this._value.content = content;
+    const filePath = this.$pathResolver.fileFullPath;
+    const content = fs.readFileSync(filePath, {encode: `utf8`}).toString();
+    this.$value.content = content;
   }
 }
+// exports.default = FileDoc;

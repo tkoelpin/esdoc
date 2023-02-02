@@ -1,6 +1,14 @@
-import path from 'path';
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 import assert from 'assert';
 import os from 'os';
+import path from 'path';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const assert2 = _interopRequireDefault(assert);
+// const os2 = _interopRequireDefault(os);
+// const path2 = _interopRequireDefault(path);
 
 /**
  * file path resolver.
@@ -11,6 +19,18 @@ import os from 'os';
  * pathResolver.resolve('./baz.js'); // 'src/foo/baz.js'
  */
 export default class PathResolver {
+  /** @type {string} */
+  #inDirPath;
+
+  /** @type {string} */
+  #filePath;
+
+  /** @type {NPMPackageObject} */
+  #packageName;
+
+  /** @type {string} */
+  #mainFilePath;
+
   /**
    * create instance.
    * @param {string} inDirPath - root directory path.
@@ -19,21 +39,15 @@ export default class PathResolver {
    * @param {string} [mainFilePath] - npm main file path.
    */
   constructor(inDirPath, filePath, packageName = null, mainFilePath = null) {
-    assert(inDirPath);
-    assert(filePath);
+    (0, assert)(inDirPath);
+    (0, assert)(filePath);
 
-    /** @type {string} */
-    this._inDirPath = path.resolve(inDirPath);
-
-    /** @type {string} */
-    this._filePath = path.resolve(filePath);
-
-    /** @type {NPMPackageObject} */
-    this._packageName = packageName;
+    this.#inDirPath = path.resolve(inDirPath);
+    this.#filePath = path.resolve(filePath);
+    this.#packageName = packageName;
 
     if (mainFilePath) {
-      /** @type {string} */
-      this._mainFilePath = path.resolve(mainFilePath);
+      this.#mainFilePath = path.resolve(mainFilePath);
     }
   }
 
@@ -44,18 +58,18 @@ export default class PathResolver {
   get importPath() {
     const relativeFilePath = this.filePath;
 
-    if (this._mainFilePath === path.resolve(relativeFilePath)) {
-      return this._packageName;
+    if (this.#mainFilePath === path.resolve(relativeFilePath)) {
+      return this.#packageName;
     }
 
     let filePath;
-    if (this._packageName) {
-      filePath = path.normalize(`${this._packageName}${path.sep}${relativeFilePath}`);
+    if (this.#packageName) {
+      filePath = path.normalize(`${this.#packageName}${path.sep}${relativeFilePath}`);
     } else {
       filePath = `./${relativeFilePath}`;
     }
 
-    return this._slash(filePath);
+    return this.#slash(filePath);
   }
 
   /**
@@ -63,7 +77,7 @@ export default class PathResolver {
    * @type {string}
    */
   get fileFullPath() {
-    return this._slash(this._filePath);
+    return this.#slash(this.#filePath);
   }
 
   /**
@@ -71,8 +85,8 @@ export default class PathResolver {
    * @type {string}
    */
   get filePath() {
-    const relativeFilePath = path.relative(path.dirname(this._inDirPath), this._filePath);
-    return this._slash(relativeFilePath);
+    const relativeFilePath = path.relative(path.dirname(this.#inDirPath), this.#filePath);
+    return this.#slash(relativeFilePath);
   }
 
   /**
@@ -80,10 +94,10 @@ export default class PathResolver {
    * @param {string} relativePath - relative path on this file.
    */
   resolve(relativePath) {
-    const selfDirPath = path.dirname(this._filePath);
+    const selfDirPath = path.dirname(this.#filePath);
     const resolvedPath = path.resolve(selfDirPath, relativePath);
-    const resolvedRelativePath = path.relative(path.dirname(this._inDirPath), resolvedPath);
-    return this._slash(resolvedRelativePath);
+    const resolvedRelativePath = path.relative(path.dirname(this.#inDirPath), resolvedPath);
+    return this.#slash(resolvedRelativePath);
   }
 
   /**
@@ -93,11 +107,14 @@ export default class PathResolver {
    * @returns {string} converted path.
    * @private
    */
-  _slash(filePath) {
-    if (os.platform() === 'win32') {
-      filePath = filePath.replace(/\\/g, '/');
+  #slash(filePath) {
+    let result = filePath;
+
+    if (os.platform() === `win32`) {
+      result = filePath.replace(/\\/gu, `/`);
     }
 
-    return filePath;
+    return result;
   }
 }
+// exports.default = PathResolver;

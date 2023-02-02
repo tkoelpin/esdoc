@@ -1,6 +1,16 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
+import babelGenerator from 'babel-generator';
+
 import AbstractDoc from './AbstractDoc.js';
 import MethodDoc from './MethodDoc.js';
-import babelGenerator from 'babel-generator';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// var _babelGenerator2 = _interopRequireDefault(_babelGenerator);
+
+// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
+// var _MethodDoc2 = _interopRequireDefault(_MethodDoc);
 
 /**
  * Doc Class from Member Expression AST node.
@@ -10,26 +20,26 @@ export default class MemberDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  _apply() {
-    super._apply();
+  #apply() {
+    // super.#apply();
 
-    Reflect.deleteProperty(this._value, 'export');
-    Reflect.deleteProperty(this._value, 'importPath');
-    Reflect.deleteProperty(this._value, 'importStyle');
+    Reflect.deleteProperty(this.$value, `export`);
+    Reflect.deleteProperty(this.$value, `importPath`);
+    Reflect.deleteProperty(this.$value, `importStyle`);
   }
 
   /** specify ``member`` to kind. */
-  _$kind() {
-    super._$kind();
-    this._value.kind = 'member';
+  $kind() {
+    // super.#$kind();
+    this.$value.kind = `member`;
   }
 
   /** use static property in class */
-  _$static() {
-    let parent = this._node.parent;
+  $static() {
+    let {parent} = this.$node;
     while (parent) {
-      if (parent.type === 'ClassMethod') {
-        this._value.static = parent.static;
+      if (parent.type === `ClassMethod`) {
+        this.$value[`static`] = parent[`static`];
         break;
       }
       parent = parent.parent;
@@ -37,19 +47,20 @@ export default class MemberDoc extends AbstractDoc {
   }
 
   /** take out self name from self node */
-  _$name() {
+  $name() {
     let name;
-    if (this._node.left.computed) {
-      const expression = babelGenerator(this._node.left.property).code.replace(/^this/, '');
+    if (this.$node.left.computed) {
+      const expression = (0, babelGenerator)(this.$node.left.property).code.replace(/^this/u, ``);
       name = `[${expression}]`;
     } else {
-      name = this._flattenMemberExpression(this._node.left).replace(/^this\./, '');
+      name = this.flattenMemberExpression(this.$node.left).replace(/^this\./u, ``);
     }
-    this._value.name = name;
+    this.$value.name = name;
   }
 
   /** borrow {@link MethodDoc#@_memberof} */
-  _$memberof() {
-    Reflect.apply(MethodDoc.prototype._$memberof, this, []);
+  $memberof() {
+    Reflect.apply(MethodDoc.prototype.$memberof, this, []);
   }
 }
+// exports.default = MemberDoc;

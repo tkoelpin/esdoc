@@ -1,6 +1,16 @@
-import logger from 'color-logger';
+// Object.defineProperty(exports, "__esModule", {value: true});
+
+import colorLogger from 'color-logger';
+
 import AbstractDoc from './AbstractDoc.js';
 import ParamParser from '../Parser/ParamParser.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// var _colorLogger2 = _interopRequireDefault(_colorLogger);
+
+// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
+// var _ParamParser2 = _interopRequireDefault(_ParamParser);
 
 /**
  * Doc class for virtual comment node of typedef.
@@ -10,27 +20,27 @@ export default class TypedefDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  _apply() {
-    super._apply();
+  #apply() {
+    // super.#apply();
 
-    this._$typedef();
+    this.$typedef();
 
-    Reflect.deleteProperty(this._value, 'export');
-    Reflect.deleteProperty(this._value, 'importPath');
-    Reflect.deleteProperty(this._value, 'importStyle');
+    Reflect.deleteProperty(this.$value, `export`);
+    Reflect.deleteProperty(this.$value, `importPath`);
+    Reflect.deleteProperty(this.$value, `importStyle`);
   }
 
   /** specify ``typedef`` to kind. */
-  _$kind() {
-    super._$kind();
-    this._value.kind = 'typedef';
+  $kind() {
+    // super.#$kind();
+    this.$value.kind = `typedef`;
   }
 
   /** set name by using tag. */
-  _$name() {
-    const tags = this._findAll(['@typedef']);
+  $name() {
+    const tags = this.$findAll([`@typedef`]);
     if (!tags) {
-      logger.w('can not resolve name.');
+      colorLogger.w(`can not resolve name.`);
       return;
     }
 
@@ -40,39 +50,40 @@ export default class TypedefDoc extends AbstractDoc {
       name = paramName;
     }
 
-    this._value.name = name;
+    this.$value.name = name;
   }
 
   /** set memberof by using file path. */
-  _$memberof() {
-    super._$memberof();
+  $memberof() {
+    // super.#$memberof();
 
     let memberof;
-    let parent = this._node.parent;
+    let {parent} = this.$node;
     while (parent) {
-      if (parent.type === 'ClassDeclaration') {
-        memberof = `${this._pathResolver.filePath}~${parent.id.name}`;
-        this._value.memberof = memberof;
+      if (parent.type === `ClassDeclaration`) {
+        memberof = `${this.$pathResolver.filePath}~${parent.id.name}`;
+        this.$value.memberof = memberof;
         return;
       }
       parent = parent.parent;
     }
 
-    this._value.memberof = this._pathResolver.filePath;
+    this.$value.memberof = this.$pathResolver.filePath;
   }
 
   /** for @typedef */
-  _$typedef() {
-    const value = this._findTagValue(['@typedef']);
+  $typedef() {
+    const value = this.$findTagValue([`@typedef`]);
     if (!value) return;
 
     const {typeText, paramName, paramDesc} = ParamParser.parseParamValue(value, true, true, false);
     const result = ParamParser.parseParam(typeText, paramName, paramDesc);
 
-    Reflect.deleteProperty(result, 'description');
-    Reflect.deleteProperty(result, 'nullable');
-    Reflect.deleteProperty(result, 'spread');
+    Reflect.deleteProperty(result, `description`);
+    Reflect.deleteProperty(result, `nullable`);
+    Reflect.deleteProperty(result, `spread`);
 
-    this._value.type = result;
+    this.$value.type = result;
   }
 }
+// exports.default = TypedefDoc;

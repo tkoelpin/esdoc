@@ -1,3 +1,5 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 /**
  * Doc Comment Parser class.
  *
@@ -21,37 +23,59 @@ export default class CommentParser {
     let comment = commentNode.value;
 
     // TODO: refactor
-    comment = comment.replace(/\r\n/gm, '\n'); // for windows
-    comment = comment.replace(/^[\t ]*/gm, ''); // remove line head space
-    comment = comment.replace(/^\*[\t ]?/, ''); // remove first '*'
-    comment = comment.replace(/[\t ]$/, ''); // remove last space
-    comment = comment.replace(/^\*[\t ]?/gm, ''); // remove line head '*'
-    if (comment.charAt(0) !== '@') comment = `@desc ${comment}`; // auto insert @desc
-    comment = comment.replace(/[\t ]*$/, ''); // remove tail space.
-    comment = comment.replace(/```[\s\S]*?```/g, (match) => match.replace(/@/g, '\\ESCAPED_AT\\')); // escape code in descriptions
-    comment = comment.replace(/^[\t ]*(@\w+)$/gm, '$1 \\TRUE'); // auto insert tag text to non-text tag (e.g. @interface)
-    comment = comment.replace(/^[\t ]*(@\w+)[\t ](.*)/gm, '\\Z$1\\Z$2'); // insert separator (\\Z@tag\\Ztext)
-    const lines = comment.split('\\Z');
 
-    let tagName = '';
-    let tagValue = '';
+    // for windows
+    comment = comment.replace(/\r\n/gmu, `\n`);
+
+    // remove line head space
+    comment = comment.replace(/^[\t ]*/gmu, ``);
+
+    // remove first `*`
+    comment = comment.replace(/^\*[\t ]?/u, ``);
+
+    // remove last space
+    comment = comment.replace(/[\t ]$/u, ``);
+
+    // remove line head `*`
+    comment = comment.replace(/^\*[\t ]?/gmu, ``);
+
+    // auto insert @desc
+    if (comment.charAt(0) !== `@`) comment = `@desc ${comment}`;
+
+    // remove tail space.
+    comment = comment.replace(/[\t ]*$/u, ``);
+
+    // escape code in descriptions
+    comment = comment.replace(/```[\s\S]*?```/gu, match => match.replace(/@/gu, `\\ESCAPED_AT\\`));
+
+    // auto insert tag text to non-text tag (e.g. @interface)
+    comment = comment.replace(/^[\t ]*(@\w+)$/gmu, `$1 \\TRUE`);
+
+    // insert separator (\\Z@tag\\Ztext)
+    comment = comment.replace(/^[\t ]*(@\w+)[\t ](.*)/gmu, `\\Z$1\\Z$2`);
+    const lines = comment.split(`\\Z`);
+
+    let tagName = ``;
+    let tagValue = ``;
     const tags = [];
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.charAt(0) === '@') {
+      if (line.charAt(0) === `@`) {
         tagName = line;
         const nextLine = lines[i + 1];
-        if (nextLine.charAt(0) === '@') {
-          tagValue = '';
+        if (nextLine.charAt(0) === `@`) {
+          tagValue = ``;
         } else {
           tagValue = nextLine;
           i++;
         }
-        tagValue = tagValue.replace('\\TRUE', '')
-          .replace(/\\ESCAPED_AT\\/g, '@')
-          .replace(/^\n/, '')
-          .replace(/\n*$/, '');
-        tags.push({tagName, tagValue});
+        tagValue = tagValue.replace(`\\TRUE`, ``).replace(/\\ESCAPED_AT\\/gu, `@`)
+          .replace(/^\n/u, ``)
+          .replace(/\n*$/u, ``);
+        tags.push({
+          tagName,
+          tagValue
+        });
       }
     }
     return tags;
@@ -63,11 +87,19 @@ export default class CommentParser {
    * @returns {{tags: Tag[], commentNode: CommentNode}} parsed comment.
    */
   static parseFromNode(node) {
-    if (!node.leadingComments) node.leadingComments = [{type: 'CommentBlock', value: ''}];
+    if (!node.leadingComments) {
+      node.leadingComments = [{
+        type:  `CommentBlock`,
+        value: ``
+      }];
+    }
     const commentNode = node.leadingComments[node.leadingComments.length - 1];
     const tags = this.parse(commentNode);
 
-    return {tags, commentNode};
+    return {
+      commentNode,
+      tags
+    };
   }
 
   /**
@@ -76,8 +108,8 @@ export default class CommentParser {
    * @returns {boolean} if true, this comment node is doc comment.
    */
   static isESDoc(commentNode) {
-    if (commentNode.type !== 'CommentBlock') return false;
-    return commentNode.value.charAt(0) === '*';
+    if (commentNode.type !== `CommentBlock`) return false;
+    return commentNode.value.charAt(0) === `*`;
   }
 
   /**
@@ -87,8 +119,9 @@ export default class CommentParser {
    */
   static buildComment(tags) {
     return tags.reduce((comment, tag) => {
-      const line = tag.tagValue.replace(/\n/g, '\n * ');
+      const line = tag.tagValue.replace(/\n/gu, `\n * `);
       return `${comment} * ${tag.tagName} \n * ${line} \n`;
-    }, '*\n');
+    }, `*\n`);
   }
 }
+// exports.default = CommentParser;

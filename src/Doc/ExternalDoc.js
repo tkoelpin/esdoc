@@ -1,6 +1,16 @@
-import logger from 'color-logger';
+// Object.defineProperty(exports, "__esModule", {value: true});
+
+import colorLogger from 'color-logger';
+
 import AbstractDoc from './AbstractDoc.js';
 import ParamParser from '../Parser/ParamParser.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// var _colorLogger2 = _interopRequireDefault(_colorLogger);
+
+// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
+// var _ParamParser2 = _interopRequireDefault(_ParamParser);
 
 /**
  * Doc Class from virtual comment node of external.
@@ -10,32 +20,32 @@ export default class ExternalDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  _apply() {
-    super._apply();
+  #apply() {
+    // super.#apply();
 
-    Reflect.deleteProperty(this._value, 'export');
-    Reflect.deleteProperty(this._value, 'importPath');
-    Reflect.deleteProperty(this._value, 'importStyle');
+    Reflect.deleteProperty(this.$value, `export`);
+    Reflect.deleteProperty(this.$value, `importPath`);
+    Reflect.deleteProperty(this.$value, `importStyle`);
   }
 
   /** specify ``external`` to kind. */
-  _$kind() {
-    super._$kind();
-    this._value.kind = 'external';
+  $kind() {
+    // super.#$kind();
+    this.$value.kind = `external`;
   }
 
   /** take out self name from tag */
-  _$name() {
-    const value = this._findTagValue(['@external']);
+  $name() {
+    const value = this.findTagValue([`@external`]);
     if (!value) {
-      logger.w('can not resolve name.');
+      colorLogger.w(`can not resolve name.`);
     }
 
-    this._value.name = value;
+    this.$value.name = value;
 
-    const tags = this._findAll(['@external']);
+    const tags = this.findAll([`@external`]);
     if (!tags) {
-      logger.w('can not resolve name.');
+      colorLogger.w(`can not resolve name.`);
       return;
     }
 
@@ -43,26 +53,28 @@ export default class ExternalDoc extends AbstractDoc {
     for (const tag of tags) {
       const {typeText, paramDesc} = ParamParser.parseParamValue(tag.tagValue, true, false, true);
       name = typeText;
-      this._value.externalLink = paramDesc;
+      this.$value.externalLink = paramDesc;
     }
 
-    this._value.name = name;
+    this.$value.name = name;
   }
 
   /** take out self memberof from file path. */
-  _$memberof() {
-    super._$memberof();
-    this._value.memberof = this._pathResolver.filePath;
+  $memberof() {
+    // super.#$memberof();
+    this.$value.memberof = this.$pathResolver.filePath;
   }
 
   /** specify name to longname */
-  _$longname() {
-    super._$longname();
-    if (this._value.longname) return;
-    this._value.longname = this._value.name;
+  $longname() {
+    // super.#$longname();
+    if (this.$value.longname) return;
+    this.$value.longname = this.$value.name;
   }
 
   /** avoid unknown tag */
-  _$external() {}
+  $external() {
+    // Should not be empty, abstract version?
+  }
 }
-
+// exports.default = ExternalDoc;

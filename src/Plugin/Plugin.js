@@ -1,14 +1,27 @@
-import path from 'path';
+// Object.defineProperty(exports, "__esModule", {value: true});
+// exports.PluginEvent = undefined;
+
+import {createRequire} from 'node:module';
+import {cwd} from 'node:process';
+import path from 'node:path';
+
+import PluginEvent from './PluginEvent.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const path2 = _interopRequireDefault(path);
 
 /**
  * Plugin system for your plugin.
  */
 class Plugin {
+  #plugins;
+
   /**
    * create instance.
    */
   constructor() {
-    this._plugins = null;
+    this.#plugins = null;
   }
 
   /**
@@ -25,17 +38,15 @@ class Plugin {
    * @param {PluginEvent} ev - plugin event object.
    * @private
    */
-  _execHandler(handlerName, ev) {
+  #execHandler(handlerName, ev) {
     /* eslint-disable global-require */
-    for (const item of this._plugins) {
+    for (const item of this.#plugins) {
       let plugin;
-      if (item.name.match(/^[./]/)) {
+      if (item.name.match(/^[./]/u)) {
         const pluginPath = path.resolve(item.name);
-        plugin = require(pluginPath);
+        plugin = createRequire(pluginPath);
       } else {
-        module.paths.push('./node_modules');
-        plugin = require(item.name);
-        module.paths.pop();
+        plugin = createRequire(path.resolve(`./node_modules/${item.name}`));
       }
 
       if (!plugin[handlerName]) continue;
@@ -46,10 +57,10 @@ class Plugin {
   }
 
   onHandlePlugins(plugins) {
-    this._plugins = plugins;
+    this.#plugins = plugins;
     const ev = new PluginEvent({plugins});
-    this._execHandler('onHandlePlugins', ev);
-    this._plugins = ev.data.plugins;
+    this.#execHandler(`onHandlePlugins`, ev);
+    this.#plugins = ev.data.plugins;
   }
 
   /**
@@ -57,7 +68,7 @@ class Plugin {
    */
   onStart() {
     const ev = new PluginEvent();
-    this._execHandler('onStart', ev);
+    this.#execHandler(`onStart`, ev);
   }
 
   /**
@@ -67,7 +78,7 @@ class Plugin {
    */
   onHandleConfig(config) {
     const ev = new PluginEvent({config});
-    this._execHandler('onHandleConfig', ev);
+    this.#execHandler(`onHandleConfig`, ev);
     return ev.data.config;
   }
 
@@ -80,7 +91,7 @@ class Plugin {
   onHandleCode(code, filePath) {
     const ev = new PluginEvent({code});
     ev.data.filePath = filePath;
-    this._execHandler('onHandleCode', ev);
+    this.#execHandler(`onHandleCode`, ev);
     return ev.data.code;
   }
 
@@ -94,9 +105,17 @@ class Plugin {
    */
   onHandleCodeParser(parser, parserOption, filePath, code) {
     const ev = new PluginEvent();
-    ev.data = {parser, parserOption, filePath, code};
-    this._execHandler('onHandleCodeParser', ev);
-    return {parser: ev.data.parser, parserOption: ev.data.parserOption};
+    ev.data = {
+      code,
+      filePath,
+      parser,
+      parserOption
+    };
+    this.#execHandler(`onHandleCodeParser`, ev);
+    return {
+      parser:       ev.data.parser,
+      parserOption: ev.data.parserOption
+    };
   }
 
   /**
@@ -110,7 +129,7 @@ class Plugin {
     const ev = new PluginEvent({ast});
     ev.data.filePath = filePath;
     ev.data.code = code;
-    this._execHandler('onHandleAST', ev);
+    this.#execHandler(`onHandleAST`, ev);
     return ev.data.ast;
   }
 
@@ -121,7 +140,7 @@ class Plugin {
    */
   onHandleDocs(docs) {
     const ev = new PluginEvent({docs});
-    this._execHandler('onHandleDocs', ev);
+    this.#execHandler(`onHandleDocs`, ev);
     return ev.data.docs;
   }
 
@@ -140,7 +159,7 @@ class Plugin {
     ev.data.copyDir = copyDir;
     ev.data.readFile = readFile;
 
-    this._execHandler('onPublish', ev);
+    this.#execHandler(`onPublish`, ev);
   }
 
   /**
@@ -151,7 +170,7 @@ class Plugin {
    */
   onHandleContent(content, fileName) {
     const ev = new PluginEvent({content, fileName});
-    this._execHandler('onHandleContent', ev);
+    this.#execHandler(`onHandleContent`, ev);
     return ev.data.content;
   }
 
@@ -160,28 +179,14 @@ class Plugin {
    */
   onComplete() {
     const ev = new PluginEvent();
-    this._execHandler('onComplete', ev);
+    this.#execHandler(`onComplete`, ev);
   }
 }
 
-/**
- * Plugin Event class.
- */
-export class PluginEvent {
-  /**
-   * create instance.
-   * @param {Object} data - event content.
-   */
-  constructor(data = {}) {
-    this.data = copy(data);
-  }
-}
-
-function copy(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
+// export exports.PluginEvent = PluginEvent;
 
 /**
  * Instance of Plugin class.
  */
 export default new Plugin();
+// exports.default = new Plugin();

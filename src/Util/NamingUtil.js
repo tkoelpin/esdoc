@@ -1,4 +1,10 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 import path from 'path';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const path2 = _interopRequireDefault(path);
 
 const filePathMap = {};
 
@@ -12,8 +18,8 @@ export default class NamingUtil {
    * @returns {string} name
    */
   static filePathToName(filePath) {
-    let basename = path.basename(filePath).split('.')[0];
-    basename = basename.replace(/[^a-zA-Z0-9_$]/g, '');
+    let [basename] = path.basename(filePath).split(`.`);
+    basename = basename.replace(/[^a-zA-Z0-9_$]/gu, ``);
 
     filePathMap[filePath] = filePathMap[filePath] || 0;
     const count = filePathMap[filePath];
@@ -23,3 +29,4 @@ export default class NamingUtil {
     return basename;
   }
 }
+// exports.default = NamingUtil;

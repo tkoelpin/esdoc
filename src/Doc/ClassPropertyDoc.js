@@ -1,5 +1,13 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 import AbstractDoc from './AbstractDoc.js';
 import MethodDoc from './MethodDoc.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// const _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
+// const _MethodDoc2 = _interopRequireDefault(_MethodDoc);
+
 
 /**
  * Doc Class from ClassProperty AST node.
@@ -9,28 +17,29 @@ export default class ClassPropertyDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  _apply() {
-    super._apply();
+  #apply() {
+    // super.#apply();
 
-    Reflect.deleteProperty(this._value, 'export');
-    Reflect.deleteProperty(this._value, 'importPath');
-    Reflect.deleteProperty(this._value, 'importStyle');
+    Reflect.deleteProperty(this.$value, `export`);
+    Reflect.deleteProperty(this.$value, `importPath`);
+    Reflect.deleteProperty(this.$value, `importStyle`);
   }
 
   /** specify ``member`` to kind. */
-  _$kind() {
-    super._$kind();
-    this._value.kind = 'member';
+  $kind() {
+    // super.#$kind();
+    this.$value.kind = `member`;
   }
 
   /** take out self name from self node */
-  _$name() {
-    super._$name();
-    this._value.name = this._node.key.name;
+  $name() {
+    // super.#$name();
+    this.$value.name = this.$node.key.name;
   }
 
   /** borrow {@link MethodDoc#@_memberof} */
-  _$memberof() {
-    Reflect.apply(MethodDoc.prototype._$memberof, this, []);
+  $memberof() {
+    Reflect.apply(MethodDoc.prototype.$memberof, this, []);
   }
 }
+// exports.default = ClassPropertyDoc;

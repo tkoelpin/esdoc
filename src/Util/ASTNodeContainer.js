@@ -1,17 +1,24 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 class ASTNodeContainer {
+  #docId;
+
+  #nodes;
+
   constructor() {
-    this._docId = 0;
-    this._nodes = {};
+    this.#docId = 0;
+    this.#nodes = {};
   }
 
   addNode(node) {
-    this._nodes[this._docId] = node;
-    return this._docId++;
+    this.#nodes[this.#docId] = node;
+    return this.#docId++;
   }
 
   getNode(id) {
-    return this._nodes[id];
+    return this.#nodes[id];
   }
 }
 
+// exports.default = new ASTNodeContainer();
 export default new ASTNodeContainer();

@@ -1,51 +1,63 @@
+// Object.defineProperty(exports, "__esModule", {value: true});
+
 import babelGenerator from 'babel-generator';
+
 import AbstractDoc from './AbstractDoc.js';
 import NamingUtil from '../Util/NamingUtil.js';
+
+// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
+
+// var _babelGenerator2 = _interopRequireDefault(_babelGenerator);
+
+// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
+// var _NamingUtil2 = _interopRequireDefault(_NamingUtil);
+
 
 /**
  * Doc Class from Function declaration AST node.
  */
 export default class FunctionDoc extends AbstractDoc {
   /** specify ``function`` to kind. */
-  _$kind() {
-    super._$kind();
-    this._value.kind = 'function';
+  $kind() {
+    // super.#$kind();
+    this.$value.kind = `function`;
   }
 
   /** take out self name from self node */
-  _$name() {
-    super._$name();
+  $name() {
+    // super.#$name();
 
-    if (this._node.id) {
-      if (this._node.id.type === 'MemberExpression') {
+    if (this.$node.id) {
+      if (this.$node.id.type === `MemberExpression`) {
         // e.g. foo[bar.baz] = function bal(){}
-        const expression = babelGenerator(this._node.id).code;
-        this._value.name = `[${expression}]`;
+        const expression = (0, babelGenerator)(this.$node.id).code;
+        this.$value.name = `[${expression}]`;
       } else {
-        this._value.name = this._node.id.name;
+        this.$value.name = this.$node.id.name;
       }
     } else {
-      this._value.name = NamingUtil.filePathToName(this._pathResolver.filePath);
+      this.$value.name = NamingUtil.filePathToName(this.$pathResolver.filePath);
     }
   }
 
   /** take out self name from file path */
-  _$memberof() {
-    super._$memberof();
-    this._value.memberof = this._pathResolver.filePath;
+  $memberof() {
+    // super.#$memberof();
+    this.$value.memberof = this.$pathResolver.filePath;
   }
 
   /** check generator property in self node */
-  _$generator() {
-    super._$generator();
-    this._value.generator = this._node.generator;
+  $generator() {
+    // super.#$generator();
+    this.$value.generator = this.$node.generator;
   }
 
   /**
    * use async property of self node.
    */
-  _$async() {
-    super._$async();
-    this._value.async = this._node.async;
+  $async() {
+    // super.#$async();
+    this.$value.async = this.$node.async;
   }
 }
+// exports.default = FunctionDoc;
