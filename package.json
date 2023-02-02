@@ -38,7 +38,7 @@
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
     "babel-register": "6.26.0",
-    "codecov": "3.8.2",
+    "codecov": "3.8.3",
     "esdoc-accessor-plugin": "latest",
     "esdoc-external-ecmascript-plugin": "latest",
     "esdoc-importpath-plugin": "^1.0.2",

@@ -41,8 +41,8 @@ export default class ESDoc {
    * @param {ESDocConfig} config - config for generation.
    */
   static generate(config) {
-    (0, assert)(config.source);
-    (0, assert)(config.destination);
+    assert(config.source);
+    assert(config.destination);
 
     this.#checkOldConfig(config);
 
@@ -58,9 +58,9 @@ export default class ESDoc {
 
     let packageName = null;
     let mainFilePath = null;
-    if (newConfig.package) {
+    if (newConfig[`package`]) {
       try {
-        const packageJSON = fsExtra.readFileSync(newConfig.package, {encode: `utf8`});
+        const packageJSON = fsExtra.readFileSync(newConfig[`package`], {encode: `utf8`});
         const packageConfig = JSON.parse(packageJSON);
         packageName = packageConfig.name;
         mainFilePath = packageConfig.main;
@@ -105,8 +105,8 @@ export default class ESDoc {
       results.push(this.#generateForIndex(newConfig));
     }
 
-    // config.package
-    if (newConfig.package) {
+    // config[`package`]
+    if (newConfig[`package`]) {
       results.push(this.#generateForPackageJSON(newConfig));
     }
 
@@ -165,7 +165,7 @@ export default class ESDoc {
 
     if (!config.index) config.index = `./README.md`;
 
-    if (!config.package) config.package = `./package.json`;
+    if (!config[`package`]) config[`package`] = `./package.json`;
 
     if (!(`outputAST` in config)) config.outputAST = true;
   }
@@ -267,8 +267,8 @@ export default class ESDoc {
     let packageJSON = ``;
     let packagePath = ``;
     try {
-      packageJSON = fsExtra.readFileSync(config.package, {encoding: `utf-8`});
-      packagePath = path.resolve(config.package);
+      packageJSON = fsExtra.readFileSync(config[`package`], {encoding: `utf-8`});
+      packagePath = path.resolve(config[`package`]);
     } catch {
       // ignore
     }

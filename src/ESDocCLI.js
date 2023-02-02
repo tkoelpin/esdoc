@@ -52,7 +52,7 @@ export default class ESDocCLI {
   exec() {
     const configPath = this.#findConfigFilePath();
     let config = configPath ? this.#loadConfigFromFile(configPath) : this.#loadConfigFromPackageJSON();
-    
+
     if (config) {
       ESDoc.generate(config);
     } else {
@@ -157,6 +157,7 @@ export default class ESDocCLI {
 
 const executedFilePath = fs.realpathSync(process.argv[1]);
 const filePath = path.normalize(import.meta.url.replace(`file:///`, ``));
+
 if (executedFilePath === filePath) {
   const cli = new ESDocCLI(process.argv);
   cli.exec();
