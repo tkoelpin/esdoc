@@ -1,8 +1,44 @@
-node_modules
-out
-npm-debug.log
-/coverage
-/_temp
-/test/fixture/dest
-/.nyc_output/
-.vscode
+# Ignore everything
+/*
+
+# But descend into directories
+# !/*/
+
+# Recursively allow files under the following subpaths
+!/.github/**
+!/manual/**
+!/script/**
+!/src/**
+!/test/**
+# !/dist/**
+# !/docs/**
+# !/config/**
+
+# Allowing Folders which contains these files
+!.gitkeep
+!.gitignore
+# !.gitlab-ci.yml
+
+# You can be specific with these rules
+!/.babelrc
+!/.editorconfig
+!/.esdoc.json
+!/.eslintignore
+!/.eslintrc.js
+!/.nycrc
+!/.travis.yml
+!/CHANGELOG.md
+!/LICENSE
+!/package-lock.json
+!/package.json
+!/README.md
+!/TODO.md
+
+# node_modules
+# out
+# npm-debug.log
+# /coverage
+# /_temp
+# /test/fixture/dest
+# /.nyc_output/
+# .vscode

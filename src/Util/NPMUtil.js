@@ -1,4 +1,4 @@
-import fsExtra from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 
 /**
@@ -14,11 +14,11 @@ export default class NPMUtil {
     let packageObj = null;
     try {
       const packageFilePath = path.resolve(path.dirname(filePath), `../../package.json`);
-      const json = fsExtra.readFileSync(packageFilePath, {encode: `utf8`});
+      const json = fs.readFileSync(packageFilePath, {encode: `utf8`});
       packageObj = JSON.parse(json);
     } catch {
       const packageFilePath = path.resolve(path.dirname(filePath), `../../../package.json`);
-      const json = fsExtra.readFileSync(packageFilePath, {encode: `utf8`});
+      const json = fs.readFileSync(packageFilePath, {encode: `utf8`});
       packageObj = JSON.parse(json);
     }
 
