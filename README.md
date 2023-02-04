@@ -1,11 +1,13 @@
 <!--![Owner Status](https://img.shields.io/badge/owner-busy-red.svg)-->
+[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+
 <!-- [![Build Status](https://travis-ci.org/esdoc/esdoc.svg?branch=master)](https://travis-ci.org/esdoc/esdoc) -->
 <!-- [![Coverage Status](https://codecov.io/gh/esdoc/esdoc/branch/master/graph/badge.svg)](https://codecov.io/gh/esdoc/esdoc) -->
 <!-- [![Document](https://doc.esdoc.org/github.com/esdoc/esdoc/badge.svg?t=0)](https://doc.esdoc.org/github.com/esdoc/esdoc) -->
 
 # ESDoc
 
-ESDoc is a documentation generator for JavaScript.<br/>
+ESDoc is a documentation generator for JavaScript.
 
 ***This ESDoc fork is currently under development.***
 <!-- Please <a href="https://try.esdoc.org">try it out</a>!
@@ -13,6 +15,7 @@ ESDoc is a documentation generator for JavaScript.<br/>
 <!-- <img class="screen-shot" src="https://raw.githubusercontent.com/esdoc/esdoc/master/manual/asset/image/top.png" width="500px" style="max-width: 500px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 1px 1px 1px rgba(0,0,0,0.5);"> -->
 
 # Features
+
 - Generates good documentation.
 - Measures documentation coverage.
 - Integrate test codes into documentation.
@@ -50,10 +53,13 @@ open ./docs/index.html
 ``` -->
 
 # Document
+
 Please visit the official [esdoc.org](https://esdoc.org) site to see more documentation.
 
 # License
+
 MIT
 
 # Author
+
 [Tobias Kölpin](https://github.com/tkoelpin)

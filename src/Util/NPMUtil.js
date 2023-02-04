@@ -1,12 +1,5 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
 import fsExtra from 'fs-extra';
 import path from 'path';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const fsExtra2 = _interopRequireDefault(fsExtra);
-// const path2 = _interopRequireDefault(path);
 
 /**
  * Node Package Manager(npm) util class.

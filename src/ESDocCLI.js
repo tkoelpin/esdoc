@@ -1,21 +1,11 @@
 #!/usr/bin/env node
 
-// Object.defineProperty(exports, `__esModule`, {value: true});
-
 import fs from 'node:fs';
 import minimist from 'minimist';
 import path from 'node:path';
 
 import ESDoc from './ESDoc.js';
 import NPMUtil from './Util/NPMUtil.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const _ESDoc2 = _interopRequireDefault(_ESDoc);
-// const fs2 = _interopRequireDefault(fs);
-// const minimist2 = _interopRequireDefault(minimist);
-// const _NPMUtil2 = _interopRequireDefault(_NPMUtil);
-// const path2 = _interopRequireDefault(path);
 
 /**
  * Command Line Interface for ESDoc.
@@ -151,9 +141,6 @@ export default class ESDocCLI {
     return null;
   }
 }
-
-// if this file is directory executed, work as CLI.
-// exports.default = ESDocCLI;
 
 const executedFilePath = fs.realpathSync(process.argv[1]);
 const filePath = path.normalize(import.meta.url.replace(`file:///`, ``));

@@ -1,5 +1,3 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
 import assert from 'assert';
 import colorLogger from 'color-logger';
 import fsExtra from 'fs-extra';
@@ -11,20 +9,6 @@ import ESParser from './Parser/ESParser.js';
 import InvalidCodeLogger from './Util/InvalidCodeLogger.js';
 import PathResolver from './Util/PathResolver.js';
 import Plugin from './Plugin/Plugin.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const _assert2 = _interopRequireDefault(assert);
-// const _colorLogger2 = _interopRequireDefault(colorLogger);
-// const _fsExtra2 = _interopRequireDefault(fsExtra);
-// const _path2 = _interopRequireDefault(path);
-
-// const _ASTUtil2 = _interopRequireDefault(_ASTUtil);
-// const _DocFactory2 = _interopRequireDefault(_DocFactory);
-// const _ESParser2 = _interopRequireDefault(_ESParser);
-// const _InvalidCodeLogger2 = _interopRequireDefault(_InvalidCodeLogger);
-// const _PathResolver2 = _interopRequireDefault(_PathResolver);
-// const _Plugin2 = _interopRequireDefault(_Plugin);
 
 /**
  * API Documentation Generator.
