@@ -41,7 +41,7 @@ export default class ESDocCLI {
    */
   exec() {
     const configPath = this.#findConfigFilePath();
-    let config = configPath ? this.#loadConfigFromFile(configPath) : this.#loadConfigFromPackageJSON();
+    const config = configPath ? this.#loadConfigFromFile(configPath) : this.#loadConfigFromPackageJSON();
 
     if (config) {
       ESDoc.generate(config);
@@ -86,15 +86,15 @@ export default class ESDocCLI {
    */
   #findConfigFilePath() {
     if (this.#argv.c) return this.#argv.c;
-    
-    [`./.esdoc.json`, `./.esdoc.js`].forEach(filePath => {
+
+    for (const filePath of [`./.esdoc.json`, `./.esdoc.js`]) {
       try {
         const absFilePath = path.resolve(filePath);
         if (fs.existsSync(absFilePath)) return absFilePath;
       } catch {
         // ignore
       }
-    });
+    }
 
     return null;
   }

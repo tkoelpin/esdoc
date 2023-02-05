@@ -1,4 +1,5 @@
-import assert from 'assert';
+// import npmAssert from 'assert';
+import assert from 'node:assert/strict';
 import colorLogger from 'color-logger';
 import fsExtra from 'fs-extra';
 import path from 'path';
@@ -25,8 +26,8 @@ export default class ESDoc {
    * @param {ESDocConfig} config - config for generation.
    */
   static generate(config) {
-    assert(config.source);
-    assert(config.destination);
+    assert.ok(config.source);
+    assert.ok(config.destination);
 
     this.#checkOldConfig(config);
 
@@ -336,4 +337,3 @@ export default class ESDoc {
     }
   }
 }
-// exports.default = ESDoc;

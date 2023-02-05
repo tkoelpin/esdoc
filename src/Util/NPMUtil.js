@@ -25,4 +25,3 @@ export default class NPMUtil {
     return packageObj;
   }
 }
-// exports.default = NPMUtil;
