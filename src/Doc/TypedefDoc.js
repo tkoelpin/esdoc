@@ -20,8 +20,8 @@ export default class TypedefDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  #apply() {
-    // super.#apply();
+  $apply() {
+    // super.$apply();
 
     this.$typedef();
 

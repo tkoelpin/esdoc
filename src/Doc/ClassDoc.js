@@ -23,7 +23,7 @@ export default class ClassDoc extends AbstractDoc {
    * @private
    */
   $apply() {
-    // super.#apply();
+    // super.$apply();
 
     this.$interface();
     this.$extends();

@@ -1,14 +1,6 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
-import assert from 'assert';
-import os from 'os';
-import path from 'path';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const assert2 = _interopRequireDefault(assert);
-// const os2 = _interopRequireDefault(os);
-// const path2 = _interopRequireDefault(path);
+import assert from 'node:assert/strict';
+import os from 'node:os';
+import path from 'node:path';
 
 /**
  * file path resolver.
@@ -39,8 +31,8 @@ export default class PathResolver {
    * @param {string} [mainFilePath] - npm main file path.
    */
   constructor(inDirPath, filePath, packageName = null, mainFilePath = null) {
-    (0, assert)(inDirPath);
-    (0, assert)(filePath);
+    assert.ok(inDirPath);
+    assert.ok(filePath);
 
     this.#inDirPath = path.resolve(inDirPath);
     this.#filePath = path.resolve(filePath);

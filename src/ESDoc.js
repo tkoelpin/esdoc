@@ -1,8 +1,7 @@
-// import npmAssert from 'assert';
 import assert from 'node:assert/strict';
 import colorLogger from 'color-logger';
-import fsExtra from 'fs-extra';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import ASTUtil from './Util/ASTUtil.js';
 import DocFactory from './Factory/DocFactory.js';
@@ -29,7 +28,7 @@ export default class ESDoc {
     assert.ok(config.source);
     assert.ok(config.destination);
 
-    this.#checkOldConfig(config);
+    ESDoc.#checkOldConfig(config);
 
     Plugin.init(config.plugins);
     Plugin.onStart();
@@ -45,7 +44,7 @@ export default class ESDoc {
     let mainFilePath = null;
     if (newConfig[`package`]) {
       try {
-        const packageJSON = fsExtra.readFileSync(newConfig[`package`], {encode: `utf8`});
+        const packageJSON = fs.readFileSync(newConfig[`package`], {encoding: `utf8`});
         const packageConfig = JSON.parse(packageJSON);
         packageName = packageConfig.name;
         mainFilePath = packageConfig.main;
@@ -101,15 +100,19 @@ export default class ESDoc {
 
     // index.json
     {
-      const dumpPath = path.resolve(newConfig.destination, `index.json`);
-      fsExtra.outputFileSync(dumpPath, JSON.stringify(results, null, 2));
+      const dumpDir = path.resolve(newConfig.destination);
+      const dumpPath = path.resolve(dumpDir, `index.json`);
+      
+      if (!fs.existsSync(dumpDir)) fs.mkdirSync(dumpDir, {recursive: true});
+        
+      fs.writeFileSync(dumpPath, JSON.stringify(results, null, 2));
     }
 
     // ast, array will be empty if config.outputAST is false - resulting in skipping the loop
     for (const ast of asts) {
       const json = JSON.stringify(ast.ast, null, 2);
       const filePath = path.resolve(newConfig.destination, `ast/${ast.filePath}.json`);
-      fsExtra.outputFileSync(filePath, json);
+      fs.writeFileSync(filePath, json);
     }
 
     // publish
@@ -162,11 +165,11 @@ export default class ESDoc {
    * @private
    */
   static #walk(dirPath, callback) {
-    const entries = fsExtra.readdirSync(dirPath);
+    const entries = fs.readdirSync(dirPath);
 
     for (const entry of entries) {
       const entryPath = path.resolve(dirPath, entry);
-      const stat = fsExtra.statSync(entryPath);
+      const stat = fs.statSync(entryPath);
 
       if (stat.isFile()) {
         callback(entryPath);
@@ -224,8 +227,8 @@ export default class ESDoc {
   static #generateForIndex(config) {
     let indexContent = ``;
 
-    if (fsExtra.existsSync(config.index)) {
-      indexContent = fsExtra.readFileSync(config.index, {encode: `utf8`}).toString();
+    if (fs.existsSync(config.index)) {
+      indexContent = fs.readFileSync(config.index, {encoding: `utf8`}).toString();
     } else {
       console.log(`[31mwarning: ${config.index} is not found. Please check config.index.[0m`);
     }
@@ -252,7 +255,7 @@ export default class ESDoc {
     let packageJSON = ``;
     let packagePath = ``;
     try {
-      packageJSON = fsExtra.readFileSync(config[`package`], {encoding: `utf-8`});
+      packageJSON = fs.readFileSync(config[`package`], {encoding: `utf-8`});
       packagePath = path.resolve(config[`package`]);
     } catch {
       // ignore
@@ -316,18 +319,18 @@ export default class ESDoc {
         const newContent = Plugin.onHandleContent(content, targetPath);
 
         console.log(`output: ${targetPath}`);
-        fsExtra.outputFileSync(targetPath, newContent, option);
+        fs.writeFileSync(targetPath, newContent, option);
       };
 
       const copy = (srcPath, destPath) => {
         const copyPath = path.resolve(config.destination, destPath);
         console.log(`output: ${copyPath}`);
-        fsExtra.copySync(srcPath, copyPath);
+        fs.copyFileSync(srcPath, copyPath);
       };
 
       const read = (filePath) => {
         const sourcePath = path.resolve(config.destination, filePath);
-        return fsExtra.readFileSync(sourcePath).toString();
+        return fs.readFileSync(sourcePath, {encoding: `utf8`}).toString();
       };
 
       Plugin.onPublish(write, copy, read);

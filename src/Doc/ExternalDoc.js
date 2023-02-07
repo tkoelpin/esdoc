@@ -20,8 +20,8 @@ export default class ExternalDoc extends AbstractDoc {
    * apply own tag.
    * @private
    */
-  #apply() {
-    // super.#apply();
+  $apply() {
+    // super.$apply();
 
     Reflect.deleteProperty(this.$value, `export`);
     Reflect.deleteProperty(this.$value, `importPath`);
