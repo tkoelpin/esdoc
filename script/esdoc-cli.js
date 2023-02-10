@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-const path = require('path');
-const sh = require('./sh');
+
+import path from 'node:path';
+import sh from './sh.js';
 
 const esdoc = path.resolve(__dirname, '..', 'src', 'ESDocCLI.js');
 const babel = path.resolve(__dirname, '..', 'node_modules', '.bin', 'babel-node');

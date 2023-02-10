@@ -1,6 +1,6 @@
 // Object.defineProperty(exports, "__esModule", {value: true});
 
-import babelTraverse from 'babel-traverse';
+import babelTraverse from '@babel/traverse';
 
 // function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
 

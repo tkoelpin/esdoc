@@ -1,3 +1,5 @@
 #!/usr/bin/env node
-const sh = require('./sh');
+
+import sh from './sh.js';
+
 sh.exec('./node_modules/.bin/eslint ./src ./test/src');

@@ -1,6 +1,6 @@
 // Object.defineProperty(exports, "__esModule", {value: true});
 
-import fs from 'fs';
+import fs from 'node:fs';
 
 import AbstractDoc from './AbstractDoc.js';
 

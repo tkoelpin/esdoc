@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-require('babel-register');
-const ESParser = require('../src/Parser/ESParser.js').default;
-const Plugin = require('../src/Plugin/Plugin.js').default;
+import '@babel/register';
+
+import ESParser from '../src/Parser/ESParser.js';
+import Plugin from '../src/Plugin/Plugin.js';
 
 Plugin.init([]);
 

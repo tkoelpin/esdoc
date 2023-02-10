@@ -1,7 +1,7 @@
 // Object.defineProperty(exports, "__esModule", {value: true});
 
-import babelGenerator from 'babel-generator';
-import path from 'path';
+import babelGenerator from '@babel/generator';
+import path from 'node:path';
 
 import ASTNodeContainer from '../Util/ASTNodeContainer.js';
 import ASTUtil from '../Util/ASTUtil.js';

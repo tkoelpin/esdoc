@@ -1,10 +1,4 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
-import path from 'path';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const path2 = _interopRequireDefault(path);
+import path from 'node:path';
 
 const filePathMap = {};
 

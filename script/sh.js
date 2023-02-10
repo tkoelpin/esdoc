@@ -1,35 +1,30 @@
-const fs = require('fs-extra');
-const path = require('path');
-const childProcess = require('child_process');
+import fs from 'node:fs';
+import path from 'node:path';
+import childProcess from 'node:child_process';
 
-function rm(path) {
-  fs.removeSync(path);
+export function rm(path) {
+  fs.rmSync(path);
 }
 
-function mkdir(path) {
+export function mkdir(path) {
   fs.mkdirs(path);
 }
 
-function exec(cmd) {
+export function exec(cmd) {
   cmd = cmd.replace(/\//g, path.sep);
   childProcess.execSync(cmd, {stdio: 'inherit'});
 }
 
-function chmod(path, mode) {
+export function chmod(path, mode) {
   fs.chmodSync(path, mode);
 }
 
-function cp(src, dst) {
+export function cp(src, dst) {
   fs.copySync(src, dst);
 }
 
-function cd(dst) {
+export function cd(dst) {
   process.chdir(dst);
 }
 
-module.exports.rm = rm;
-module.exports.mkdir = mkdir;
-module.exports.exec = exec;
-module.exports.chmod = chmod;
-module.exports.cp = cp;
-module.exports.cd = cd;
+export default {rm, mkdir,  exec, chmod, cp, cd};

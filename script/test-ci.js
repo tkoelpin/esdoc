@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-const sh = require('./sh');
+
+import sh from './sh.js';
 
 sh.exec('./script/eslint.js');
 sh.exec('./script/test.js --coverage');

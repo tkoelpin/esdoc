@@ -1,6 +1,6 @@
 // Object.defineProperty(exports, "__esModule", {value: true});
 
-import babelGenerator from 'babel-generator';
+import babelGenerator from '@babel/generator';
 
 import AbstractDoc from './AbstractDoc.js';
 import NamingUtil from '../Util/NamingUtil.js';
