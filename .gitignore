@@ -5,14 +5,14 @@
 # !/*/
 
 # Recursively allow files under the following subpaths
-!/.github/**
-!/manual/**
-!/script/**
-!/src/**
+!/.github/
+!/manual/
+!/script/
+!/src/
 !/test/**
-# !/dist/**
-# !/docs/**
-# !/config/**
+# !/dist/
+# !/docs/
+# !/config/
 
 # Allowing Folders which contains these files
 !.gitkeep
