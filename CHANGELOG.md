@@ -2,7 +2,8 @@
 
 ## 2.0.0 (2023-mm-dd)
 - **Core**
-  - Updated Packages
+  - Updated Packages: ``
+  - Removed Packages: `fs-extra`
   - Change the template module from CommonJS to ESM
 
 ## Older Changelogs

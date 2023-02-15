@@ -1,4 +1,3 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
 // exports.PluginEvent = undefined;
 
 import {createRequire} from 'node:module';
@@ -6,10 +5,6 @@ import {cwd} from 'node:process';
 import path from 'node:path';
 
 import PluginEvent from './PluginEvent.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const path2 = _interopRequireDefault(path);
 
 /**
  * Plugin system for your plugin.
@@ -183,7 +178,7 @@ class Plugin {
   }
 }
 
-// export exports.PluginEvent = PluginEvent;
+// export PluginEvent;
 
 /**
  * Instance of Plugin class.

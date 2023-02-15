@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import {createRequire} from 'node:module';
 import fs from 'node:fs';
 import minimist from 'minimist';
 import path from 'node:path';
@@ -113,7 +114,7 @@ export default class ESDocCLI {
 
     if (ext === `.js`) {
       /* eslint-disable global-require */
-      result = require(absConfigFilePath);
+      result = createRequire(absConfigFilePath);
     } else {
       const configJSON = fs.readFileSync(absConfigFilePath, {encode: `utf8`});
       const config = JSON.parse(configJSON);

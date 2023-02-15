@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import ESDocCLI from '../src/ESDocCLI.js';
 
 export function cli(configPath) {

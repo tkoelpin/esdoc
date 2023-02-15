@@ -1,5 +1,3 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
 import colorLogger from 'color-logger';
 
 import AssignmentDoc from '../Doc/AssignmentDoc.js';
@@ -14,22 +12,6 @@ import MemberDoc from '../Doc/MemberDoc.js';
 import MethodDoc from '../Doc/MethodDoc.js';
 import TypedefDoc from '../Doc/TypedefDoc.js';
 import VariableDoc from '../Doc/VariableDoc.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const _AssignmentDoc2 = _interopRequireDefault(_AssignmentDoc);
-// const _ASTUtil2 = _interopRequireDefault(_ASTUtil);
-// const _ClassDoc2 = _interopRequireDefault(_ClassDoc);
-// const _ClassPropertyDoc2 = _interopRequireDefault(_ClassPropertyDoc);
-// const _colorLogger2 = _interopRequireDefault(_colorLogger);
-// const _CommentParser2 = _interopRequireDefault(_CommentParser);
-// const _ExternalDoc2 = _interopRequireDefault(_ExternalDoc);
-// const _FileDoc2 = _interopRequireDefault(_FileDoc);
-// const _FunctionDoc2 = _interopRequireDefault(_FunctionDoc);
-// const _MemberDoc2 = _interopRequireDefault(_MemberDoc);
-// const _MethodDoc2 = _interopRequireDefault(_MethodDoc);
-// const _TypedefDoc2 = _interopRequireDefault(_TypedefDoc);
-// const _VariableDoc2 = _interopRequireDefault(_VariableDoc);
 
 const already = Symbol(`already`);
 
@@ -48,9 +30,7 @@ export default class DocFactory {
 
   #pathResolver;
 
-  #processedClassNodes;
-
-  #decideType;
+  #processedClassNodes;  
 
   /**
    * @type {DocObject[]}
@@ -452,7 +432,7 @@ export default class DocFactory {
    * @returns {{type: ?string, node: ?ASTNode}} decided type.
    * @private
    */
-  _decideType(tags, node) {
+  #decideType(tags, node) {
     let type = null;
     for (const tag of tags) {
       const tagName = tag.tagName;

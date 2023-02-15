@@ -2,4 +2,6 @@
 
 import sh from './sh.js';
 
-sh.exec('./node_modules/.bin/eslint ./src ./test/src');
+const cwd = process.cwd();
+
+sh.exec(`${cwd}./node_modules/.bin/eslint ./src ./test/src`);

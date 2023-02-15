@@ -1,10 +1,4 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
-import fsExtra from 'fs-extra';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const fsExtra2 = _interopRequireDefault(fsExtra);
+import fs from 'node:fs';
 
 /**
  * logger for invalid code which can not be parsed with ESDoc.
@@ -27,7 +21,7 @@ class InvalidCodeLogger {
       return;
     }
 
-    const lines = fsExtra.readFileSync(filePath).toString()
+    const lines = fs.readFileSync(filePath).toString()
       .split(`\n`);
     const targetLines = [];
     let start;
@@ -70,7 +64,7 @@ class InvalidCodeLogger {
    * @param {Error} error - error object.
    */
   showFile(filePath, error) {
-    const lines = fsExtra.readFileSync(filePath).toString()
+    const lines = fs.readFileSync(filePath).toString()
       .split(`\n`);
     const start = Math.max(error.loc.line - 3, 1);
     const end = Math.min(error.loc.line + 3, lines.length);
@@ -95,4 +89,3 @@ class InvalidCodeLogger {
  * singleton for {@link InvalidCodeLogger}
  */
 export default new InvalidCodeLogger();
-// exports.default = new InvalidCodeLogger();

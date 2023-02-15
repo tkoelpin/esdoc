@@ -1,18 +1,8 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
-import fsExtra from 'fs-extra';
+import fs from 'node:fs';
 
 import AbstractDoc from './AbstractDoc.js';
 import NamingUtil from '../Util/NamingUtil.js';
 import ParamParser from '../Parser/ParamParser.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// const fsExtra2 = _interopRequireDefault(fsExtra);
-
-// const _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
-// const _NamingUtil2 = _interopRequireDefault(_NamingUtil);
-// const _ParamParser2 = _interopRequireDefault(_ParamParser);
 
 /**
  * Doc Class from Class Declaration AST node.
@@ -141,7 +131,7 @@ export default class ClassDoc extends AbstractDoc {
    * @private
    */
   readSelection(filePath, line, startColumn, endColumn) {
-    const code = fsExtra.readFileSync(filePath).toString();
+    const code = fs.readFileSync(filePath).toString();
     const lines = code.split(`\n`);
     const selectionLine = lines[line - 1];
     const tmp = [];
