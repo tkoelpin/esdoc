@@ -1,16 +1,6 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
-import colorLogger from 'color-logger';
-
 import AbstractDoc from './AbstractDoc.js';
+import ColorLogger from '../Util/ColorLogger.js';
 import ParamParser from '../Parser/ParamParser.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// var _colorLogger2 = _interopRequireDefault(_colorLogger);
-
-// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
-// var _ParamParser2 = _interopRequireDefault(_ParamParser);
 
 /**
  * Doc class for virtual comment node of typedef.
@@ -40,7 +30,7 @@ export default class TypedefDoc extends AbstractDoc {
   $name() {
     const tags = this.$findAll([`@typedef`]);
     if (!tags) {
-      colorLogger.w(`can not resolve name.`);
+      ColorLogger.warn(`can not resolve name.`);
       return;
     }
 

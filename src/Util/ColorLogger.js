@@ -1,6 +1,6 @@
 /**
  * A colorful logger for the console output
- * 
+ *
  * format:
  * ``Time [LogLevel]: File: log text``
  *
@@ -13,7 +13,7 @@
  * - info: green
  * - warning: yellow
  * - error: red
- * 
+ *
  * @export
  * @class ColorLogger
  * @example
@@ -28,14 +28,14 @@
  */
 export class ColorLogger {
     #color = Object.freeze({
-        0: `[45;97m`,
-        1: `[95m`,
-        2: `[41;97m`,
-        3: `[91m`,
-        4: `[43;30m`,
-        5: `[93m`,
-        6: `[92m`,
-        7: `[96m`,
+        0: `\u{001b}[45;97m`,
+        1: `\u{001b}[95m`,
+        2: `\u{001b}[41;97m`,
+        3: `\u{001b}[91m`,
+        4: `\u{001b}[43;30m`,
+        5: `\u{001b}[93m`,
+        6: `\u{001b}[92m`,
+        7: `\u{001b}[96m`,
         8: null
     });
 
@@ -49,6 +49,12 @@ export class ColorLogger {
         info: 6,
         debug: 7,
         default: 8
+    });
+
+    #shortMonths = [`Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`];
+
+    #regEx = Object.freeze({
+        rgb: /^(?:(?:[1-9]?\d|1\d{2}|2(?:[0-4]\d|5[0-5]))(?:;(?:[1-9]?\d|1\d{2}|2(?:[0-4]\d|5[0-5]))){2}(?:-(?:[1-9]?\d|1\d{2}|2(?:[0-4]\d|5[0-5]))(?:;(?:[1-9]?\d|1\d{2}|2(?:[0-4]\d|5[0-5]))){2})?|-(?:[1-9]?\d|1\d{2}|2(?:[0-4]\d|5[0-5]))(?:;(?:[1-9]?\d|1\d{2}|2(?:[0-4]\d|5[0-5]))){2})$/
     });
 
     #tagName;
@@ -66,9 +72,26 @@ export class ColorLogger {
         this.#tagName = tagName;
     }
 
+    showColorTable() {
+        let i, j;
+
+        for (i = 0; i < 11; i++) {
+            const list = [];
+
+            for (j = 0; j < 10; j++) {
+                const n = 10 * i + j;
+                if (n > 108) break;
+                const paddedNum = n.toString().padStart(3);
+                list.push(`\u{001b}[${n}m ${paddedNum} \u{001b}[0m`);
+            }
+
+            console.log(list.join(` `));
+        }
+    }
+
     /**
      * Get the information where the log was called.
-     * 
+     *
      * @returns {String} The called file name and its line number
      * @private
      */
@@ -83,10 +106,10 @@ export class ColorLogger {
             const matched = line.match(/([\w\d\-_.]*:\d+:\d+)/);
             info = matched[1];
         }
-    
+
         return info;
     }
-    
+
     /**
      * Get a formatted date time string from a plain Date object
      *
@@ -95,22 +118,35 @@ export class ColorLogger {
      * @private
      */
     #formatDateTime(date) {
-        let month = date.getMonth() + 1;
-        if (month < 10) month = `0${month}`;
-        
-        let day = date.getDate();
-        if (day < 10) day = `0${day}`;
-        
-        let hour = date.getHours();
-        if (hour < 10) hour = `0${hour}`;
-        
-        let minutes = date.getMinutes();
-        if (minutes < 10) minutes = `0${minutes}`;
-        
-        let sec = date.getSeconds();
-        if (sec < 10) sec = `0${sec}`;
+        const year = date.getFullYear();
+        const monthShort = this.#shortMonths[date.getMonth()];
+        const month = (date.getMonth() + 1).toString().padStart(2, `0`);
+        const day = date.getDate().toString().padStart(2, `0`);
+        const hour = date.getHours().toString().padStart(2, `0`);
+        const minutes = date.getMinutes().toString().padStart(2, `0`);
+        const sec = date.getSeconds().toString().padStart(2, `0`);
 
-        return `${date.getFullYear()}-${month}-${day} ${hour}:${minutes}:${sec}`;
+        // return `${year}-${month}-${day} ${hour}:${minutes}:${sec}`;
+        return `${monthShort} ${day} ${hour}:${minutes}:${sec}`;
+    }
+
+    #convertColor(color) {
+        let convertedColor = null;
+
+        if (color.match(this.#regEx.rgb)) {
+            let foreground = null;
+            let background = null;
+
+            if (color.includes(`-`)) [foreground, background] = color.split(`-`);
+            else foreground = color;
+
+            foreground = foreground !== null ? `\u{001b}[38;2;${foreground}m` : ``;
+            background = background !== null ? `\u{001b}[48;2;${background}m` : ``,
+
+            convertedColor = foreground + background;
+        }
+
+        return convertedColor;
     }
 
     /**
@@ -121,6 +157,11 @@ export class ColorLogger {
          * @private
          */
     #output(level, ...msg) {
+        const color = this.#color[level] ?? ``;
+        const now = this.#formatDateTime(new Date());
+        const severity = level < 8 ? ` [${Object.entries(this.#logLevel)[level][0].toUpperCase()}]` : ``;
+        const tagName = this.#tagName ?? ``;
+        const info = this.#tagName !== null ? ` [${this.#getInfo()}]` : this.#getInfo();
         const text = [];
 
         for (const m of msg) {
@@ -128,15 +169,29 @@ export class ColorLogger {
             else text.push(JSON.stringify(m, null, 2).replace(/(?:^"|"$)/gu, ``));
         }
 
-        const color = this.#color[level] ?? ``;
+        const log = `${color} ${now}${severity}: ${tagName}${info}: ${text.join(' ')} \u{001b}[0m`;
+
+        console.log(log);
+    }
+
+    #newOutput({level = null, color = null, msg} = {}) {
+        console.log(`Level: ${level}\nColor: ${color}\nMsg:`, msg, `\n`);
+
+        const logColor = color !== null ? this.#convertColor(color) : ``;
         const now = this.#formatDateTime(new Date());
-        const severity = level < 8 ? ` [${Object.entries(this.#logLevel)[level][0].toUpperCase()}]` : ``;
+        const severity = level !== null && level < 8 ? ` [${Object.entries(this.#logLevel)[level][0].toUpperCase()}]` : ``;
         const tagName = this.#tagName ?? ``;
         const info = this.#tagName !== null ? ` [${this.#getInfo()}]` : this.#getInfo();
+        const text = [];
 
-        const log = `${color} ${now}${severity}: ${tagName}${info}: ${text.join(' ')} [0m`;
-        
-        console.log(log);        
+        for (const m of msg) {
+            if (typeof m === 'object') text.push(JSON.stringify(m, null, 2));
+            else text.push(JSON.stringify(m, null, 2).replace(/(?:^"|"$)/gu, ``));
+        }
+
+        const log = `${logColor} ${now}${severity}: ${tagName}${info}: ${text.join(' ')} \u{001b}[0m`;
+
+        console.log(log);
     }
 
     /**
@@ -230,17 +285,16 @@ export class ColorLogger {
      * @memberof ColorLogger
      */
     log(...msg) { return this.#output(this.#logLevel.default, ...msg); }
+
+    // rgbLog(color, ...msg) { return this.#newOutput({color, msg}); }
 }
 
+// Check RGB
+// R:G:B
+// or convert from Hex to RGB
+
 // const logger = new ColorLogger('TestApplication');
-// logger.emerg('An emergency message.');
-// logger.alert('An alert message.');
-// logger.crit('A critical message.');
-// logger.err('An error message.');
-// logger.warning('A warning message.');
-// logger.notice('A notice message.');
-// logger.info('An informational message.');
-// logger.debug('A debug message.');
-// logger.log('[32mA plain "debuggy \n message" logging message.');
+// logger.rgbLog('-0;255;0', 'What?', 'It should work', 'Even with more Data.')
+// logger.showColorTable();
 
 export default new ColorLogger();

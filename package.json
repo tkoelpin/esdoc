@@ -22,9 +22,9 @@
     "lint": "node ./script/eslint.js"
   },
   "dependencies": {
-    "@babel/generator": "^7.20.14",
-    "@babel/parser": "^7.20.15",
-    "@babel/traverse": "^7.20.13",
+    "@babel/generator": "^7.21.1",
+    "@babel/parser": "^7.21.1",
+    "@babel/traverse": "^7.21.0",
     "cheerio": "1.0.0-rc.12",
     "color-logger": "0.0.6",
     "escape-html": "1.0.3",
@@ -34,9 +34,9 @@
     "taffydb": "2.7.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.20.7",
+    "@babel/cli": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
-    "@babel/register": "^7.18.9",
+    "@babel/register": "^7.21.0",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
     "chai": "^4.3.7",    
@@ -75,11 +75,11 @@
     "proposal"
   ],
   "files": [
-    "out/src",
+    "dist/src",
     "README.md"
   ],
-  "main": "out/src/ESDoc.js",
+  "main": "dist/src/ESDoc.js",
   "bin": {
-    "esdoc": "out/src/ESDocCLI.js"
+    "esdoc": "dist/src/ESDocCLI.js"
   }
 }

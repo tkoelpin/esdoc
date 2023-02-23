@@ -1,16 +1,6 @@
-// Object.defineProperty(exports, "__esModule", {value: true});
-
-import colorLogger from 'color-logger';
-
 import AbstractDoc from './AbstractDoc.js';
+import ColorLogger from '../Util/ColorLogger.js';
 import ParamParser from '../Parser/ParamParser.js';
-
-// function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : {def: obj}; }
-
-// var _colorLogger2 = _interopRequireDefault(_colorLogger);
-
-// var _AbstractDoc2 = _interopRequireDefault(_AbstractDoc);
-// var _ParamParser2 = _interopRequireDefault(_ParamParser);
 
 /**
  * Doc Class from virtual comment node of external.
@@ -38,14 +28,14 @@ export default class ExternalDoc extends AbstractDoc {
   $name() {
     const value = this.findTagValue([`@external`]);
     if (!value) {
-      colorLogger.w(`can not resolve name.`);
+      ColorLogger.warn(`can not resolve name.`);
     }
 
     this.$value.name = value;
 
     const tags = this.findAll([`@external`]);
     if (!tags) {
-      colorLogger.w(`can not resolve name.`);
+      ColorLogger.warn(`can not resolve name.`);
       return;
     }
 

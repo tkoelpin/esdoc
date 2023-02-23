@@ -1,9 +1,9 @@
-import colorLogger from 'color-logger';
 
 import AssignmentDoc from '../Doc/AssignmentDoc.js';
 import ASTUtil from '../Util/ASTUtil.js';
 import ClassDoc from '../Doc/ClassDoc.js';
 import ClassPropertyDoc from '../Doc/ClassPropertyDoc.js';
+import ColorLogger from '../Util/ColorLogger.js';
 import CommentParser from '../Parser/CommentParser.js';
 import ExternalDoc from '../Doc/ExternalDoc.js';
 import FileDoc from '../Doc/FileDoc.js';
@@ -30,7 +30,7 @@ export default class DocFactory {
 
   #pathResolver;
 
-  #processedClassNodes;  
+  #processedClassNodes;
 
   /**
    * @type {DocObject[]}
@@ -129,7 +129,7 @@ export default class DocFactory {
           break;
         }
         default:
-          colorLogger.w(`unknown export declaration type. type = "${exportNode.declaration.type}"`);
+          ColorLogger.warn(`unknown export declaration type. type = "${exportNode.declaration.type}"`);
           break;
       }
 
@@ -521,7 +521,7 @@ export default class DocFactory {
       resultNode = node;
       resultType = `Method`;
     } else {
-      colorLogger.w(`this method is not in class`, node);
+      ColorLogger.warn(`this method is not in class`, node);
       resultNode = null;
       resultType = null;
     }
@@ -545,7 +545,7 @@ export default class DocFactory {
     const resultNode = isClassNodeProcessed ? node : null;
     const resultType = isClassNodeProcessed ? `ClassProperty` : null;
 
-    if (!isClassNodeProcessed) colorLogger.w(`this class property is not in class`, node);
+    if (!isClassNodeProcessed) ColorLogger.warn(`this class property is not in class`, node);
 
     return {node: resultNode, type: resultType};
   }
@@ -661,7 +661,7 @@ export default class DocFactory {
           resultType = `Member`;
 
           if (!this.#processedClassNodes.includes(classNode)) {
-            colorLogger.w(`this member is not in class.`, this.#pathResolver.filePath, newNode);
+            ColorLogger.warn(`this member is not in class.`, this.#pathResolver.filePath, newNode);
 
             resultNode = null;
             resultType = null;
