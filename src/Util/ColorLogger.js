@@ -1,3 +1,5 @@
+// https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+
 /**
  * A colorful logger for the console output
  *

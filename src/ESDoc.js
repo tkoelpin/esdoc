@@ -40,16 +40,11 @@ export default class ESDoc {
      * @param {ESDocConfig} config - config for generation.
      */
     static generate(config) {
-        // assert.ok(config.source);
-        // assert.ok(config.destination);
-
         // this.#checkOldConfig(config);
 
         Plugin.init(config.plugins);
         Plugin.onStart();
         const newConfig = Plugin.onHandleConfig(config);
-
-        // ColorLogger.debug(newConfig);
 
         this.#setDefaultConfig(newConfig);
 

@@ -1,6 +1,7 @@
 {
   "source": "./src",
   "destination": "./out/docs",
+  "includes": [""],
   "excludes": ["Publisher/Builder/template/"],
   "debug": false,
   "index": "./README.md",

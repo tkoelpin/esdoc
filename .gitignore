@@ -1,30 +1,26 @@
-# Ignore everything
+# Exclude everything from uploading
 /*
 
-# But descend into directories
-# !/*/
+# Exclude the following directories
+/.vscode/
 
-# Recursively allow files under the following subpaths
+# Exclude the following files
+
+# Include the following directories
 !/.github/
 !/manual/
 !/script/
 !/src/
-!/test/**
-# !/dist/
-# !/docs/
-# !/config/
+!/test/
 
-# Allowing Folders which contains these files
-!.gitkeep
-!.gitignore
-# !.gitlab-ci.yml
-
-# You can be specific with these rules
+# Include the following files
+!**/.gitkeep
+!/.gitignore
 !/.babelrc
 !/.editorconfig
 !/.esdoc.json
 !/.eslintignore
-!/.eslintrc.js
+!/.eslintrc.json
 !/.nycrc
 !/.travis.yml
 !/CHANGELOG.md
