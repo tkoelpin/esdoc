@@ -5,41 +5,35 @@ import util from 'node:util';
 import T from './Template.js';
 import ColorLogger from './ColorLogger.js';
 
-String.prototype.format = () => {
-    return [...arguments].reduce((p,c) => p.replace(/%s/,c), this);
-};
-
 export default class Validator {
-    static #error = Object.freeze({
-        common: {
-            emptyValue:  T.build `The variable '{1}' is empty and it should not be empty.`,
-            invalidType: T.build `The variable '{0}' has a type of {'{1}'}, but {'{2}'} expected.`,
-             missingKey:  T.build `The object '{0}' needs the key '{1}' for further proceedings. Please fix it!`
-        },
-        validateConfig: {
-            configType:         `The config settings is not an object.`,
-            configValue:        `The config settinngs is empty and it should not be empty.`,
-            destinationMissing: `The attribute 'destination' is missing in the config settings.`,
-            destinationType:    `The value of the attribute 'destination' does not contain a string in the config settings.`,
-            excludeType1:       `The %s array value of the attribute 'excludes' does not contain a string in the config settings.`,
-            excludeType2:       `The value of the attribute 'excludes[%d]' does not contain a string in the config settings.`,
-            includeType1:       `The %s array value of the attribute 'includes' does not contain a string in the config settings.`,
-            includeType2:       `The value of the attribute 'includes[%d]' does not contain a string in the config settings.`,
-            indexType:          `The value of the attribute 'index' does not contain a string in the config settings.`,
-            packageType:        `The value of the attribute 'package' does not contain a string in the config settings.`,
-            sourceEmpty:        `The value of the attribute 'source' does not contain a string in the config settings.`,
-            sourceMissing:      `The attribute 'source' is missing in the config settings.`,
-            sourceType:         `The value of the attribute 'source' does not contain a string in the config settings.`,
-        }
-    });
-
     static #regEx = Object.freeze({
         ordinals: {
             first:  /(?:^1$|[02-9]1$)/u,
             second: /(?:^2$|[02-9]2$)/u,
             third:  /(?:^3$|[02-9]3$)/u
         }
-    })
+    });
+
+    static #error = Object.freeze({
+        emptyValue:  T.build `The variable '${0}' is empty and should not be empty.`,
+        invalidType: T.build `The variable ${0} has a type of {${1}}, but {${2}} expected.`,
+        missingKey:  T.build `The object '${0}' needs the key '${1}' for further proceedings. Please fix it!`
+        // validateConfig: {
+        //     configType:         `The config settings is not an object.`,
+        //     configValue:        `The config settinngs is empty and it should not be empty.`,
+        //     destinationMissing: `The attribute 'destination' is missing in the config settings.`,
+        //     destinationType:    `The value of the attribute 'destination' does not contain a string in the config settings.`,
+        //     excludeType1:       `The %s array value of the attribute 'excludes' does not contain a string in the config settings.`,
+        //     excludeType2:       `The value of the attribute 'excludes[%d]' does not contain a string in the config settings.`,
+        //     includeType1:       `The %s array value of the attribute 'includes' does not contain a string in the config settings.`,
+        //     includeType2:       `The value of the attribute 'includes[%d]' does not contain a string in the config settings.`,
+        //     indexType:          `The value of the attribute 'index' does not contain a string in the config settings.`,
+        //     packageType:        `The value of the attribute 'package' does not contain a string in the config settings.`,
+        //     sourceEmpty:        `The value of the attribute 'source' does not contain a string in the config settings.`,
+        //     sourceMissing:      `The attribute 'source' is missing in the config settings.`,
+        //     sourceType:         `The value of the attribute 'source' does not contain a string in the config settings.`,
+        // }
+    });
 
     /**
      * Check if the ESDoc config is suitable and well formed
@@ -49,36 +43,79 @@ export default class Validator {
      * @memberof Validator
      */
     static validateConfig(config) {
+        this.#requiredConfig(config);
+        this.#optionalConfig(config);
+        this.#pluginConfig(config);
+    }
+
+    static #requiredConfig(config) {
         // Checks if the config settings is not an object
-        if (!this.#isObject(config)) throw new Error(this.#error.common.invalidType(`config`, this.#getType(config), `Object`));
+        if (!this.isObject(config)) {
+            const msg = this.#error.invalidType(`config`, this.getType(config), `Object`);
+            throw new TypeError(msg);
+        }
 
         // Checks if the config settings is an empty object
-        if (this.#isEmpty(config)) throw new Error(this.#error.validateConfig.configValue);
+        console.log(this.isEmpty(config));
+        if (this.isEmpty(config)) {
+            console.log(`Yep, I'm empty.`);
+            const msg = this.#error.emptyValue(`config`);
+            throw new Error(msg);
+        }
 
         // Checks if the config settings has not a 'source' attribute
-        if (!Object.hasOwn(config, `source`)) throw new Error(this.#error.validateConfig.sourceMissing);
+        if (!Object.hasOwn(config, `source`)) {
+            const msg = this.#error.missingKey(`config`, `source`);
+            throw new Error(msg);
+        }
 
         // Checks if the value of the 'source' attribute in the config settings is not a string
-        if (!this.#isString(config.source)) throw new Error(this.#error.validateConfig.sourceType);
+        if (!this.isString(config.source)) {
+            const msg = this.#error.invalidType(`config.source`, this.getType(config.source), `String`);
+            throw new TypeError(msg);
+        }
+
+        // Checks if the value of the 'source' attribute in the config settings is not empty
+        if (this.isEmpty(config)) {
+            const msg = this.#error.emptyValue(`config.source`);
+            throw new Error(msg);
+        }
 
         // Checks if the config settings has not a 'destination' attribute
-        if (!Object.hasOwn(config, `destination`)) throw new Error(this.#error.validateConfig.destinationMissing);
+        if (!Object.hasOwn(config, `destination`)) {
+            const msg = this.#error.missingKey(`config`, `destination`);
+            throw new Error(msg);
+        }
 
         // Checks if the value of the 'destination' attribute in the config settings is not a string
-        if (!this.#isString(config.destination)) throw new Error(this.#error.validateConfig.destinationType);
+        if (!this.isString(config.destination)) {
+            const msg = this.#error.invalidType(`config.destination`, this.getType(config.destination), `String`);
+            throw new TypeError(msg);
+        }
 
+        // Checks if the value of the 'destination' attribute in the config settings is not empty
+        if (this.isEmpty(config.destination)) {
+            const msg = this.#error.emptyValue(`config.destination`);
+            throw new Error(msg);
+        }
+    }
+
+    static #optionalConfig(config) {
         // Checks if the config settings has a 'includes' attribute
         if (Object.hasOwn(config, `includes`)) {
             // Checks if the value of the 'includes' attribute in the config settings is not an array
-            if (!this.#isArray(config.includes)) throw new Error(this.#error.validateConfig.includesType);
+            if (!this.isArray(config.includes)) {
+                const msg = this.#error.invalidType(`config.includes`, this.getType(config.includes), `Array`);
+                throw new TypeError(msg);
+            }
 
             // Checks if the array of the 'includes' attribute in the config settings is not empty
-            if (!this.#isEmpty(config.includes)) {
+            if (!this.isEmpty(config.includes)) {
                 const includeErrors = [];
 
                 config.includes.forEach((value, key) => {
                     const ext = this.#getOrdinals(key + 1);
-                    if (!this.#isString(value)) {
+                    if (!this.isString(value)) {
                         // includeErrors.push(util.format(this.#error.validateConfig.includeType1, ext));
                         console.log(util.format(this.#error.validateConfig.includeType1, ext));
                         console.log(util.format(this.#error.validateConfig.includeType2, key));
@@ -92,23 +129,24 @@ export default class Validator {
         // Checks if the config settings has a 'excludes' attribute
         if (Object.hasOwn(config, `excludes`)) {
             // Checks if the value of the 'excludes' attribute in the config settings is not an array
-            if (!this.#isArray(config.excludes)) {
-                throw new Error(this.#error.common.invalidType(`config.excludes`, this.#getType(config.excludes), `Array`));
+            if (!this.isArray(config.excludes)) {
+                const msg = this.#error.invalidType(`config.excludes`, this.getType(config.excludes), `Array`);
+                throw new TypeError(msg);
             }
 
             // Checks if the array of the 'excludes' attribute in the config settings is not empty
-            if (!this.#isEmpty(config.excludes)) {
+            if (!this.isEmpty(config.excludes)) {
                 const excludeErrors = [];
 
                 config.excludes.forEach((value, key) => {
                     const ext = this.#getOrdinals(key + 1);
-                    if (!this.#isString(value)) {
+                    if (!this.isString(value)) {
                         // excludeErrors.push(util.format(this.#error.validateConfig.excludeType, ext));
                         console.log(util.format(this.#error.validateConfig.excludeType, ext));
                         console.log(util.format(this.#error.validateConfig.excludeType, key));
                     }
 
-                    if (this.#isEmpty(value)) console.log(util.format(this.#error.validateConfig.excludeType, key));
+                    if (this.isEmpty(value)) console.log(util.format(this.#error.validateConfig.excludeType, key));
                 });
 
                 if (excludeErrors.length > 0) throw new Error(excludeErrors.join(`\n`));
@@ -118,17 +156,43 @@ export default class Validator {
         // Checks if the config settings has a 'excludes' attribute
         if (Object.hasOwn(config, `index`)) {
             // Checks if the value of the 'index' attribute in the config settings is not a string
-            if (!this.#isString(config.index)) throw new Error(this.#error.validateConfig.indexType);
+            if (!this.isString(config.index)) {
+                const msg = this.#error.invalidType(`config.index`, this.getType(config.index), `String`);
+                throw new TypeError(msg);
+            }
+
+            // Checks if the value of the 'index' attribute in the config settings is not empty
+            if (this.isEmpty(config.index)) {
+                const msg = this.#error.emptyValue(`config.index`);
+                throw new Error(msg);
+            }
         }
 
         // Checks if the config settings has a 'excludes' attribute
         if (Object.hasOwn(config, `package`)) {
             // Checks if the value of the 'package' attribute in the config settings is not a string
-            if (!this.#isString(config[`package`])) throw new Error(this.#error.validateConfig.packageType);
+            if (!this.isString(config[`package`])) {
+                const msg = this.#error.invalidType(`config.package`, this.getType(config[`package`]), `String`);
+                throw new TypeError(msg);
+            }
+
+            // Checks if the value of the 'index' attribute in the config settings is not empty
+            if (this.isEmpty(config[`package`])) {
+                const msg = this.#error.emptyValue(`config.package`);
+                throw new Error(msg);
+            }
         }
 
-        // console.log(config);
+        if (Object.hasOwn(config, `outputAST`)) {
+            // Checks if the value of the 'outputAST' attribute in the config settings is not a boolean
+            if (!this.isBoolean(config.outputAST)) {
+                const msg = this.#error.invalidType(`config.outputAST`, this.getType(config.outputAST), `String`);
+                throw new TypeError(msg);
+            }
+        }
+    }
 
+    static #pluginConfig(config) {
         // if (!config.includes) config.includes = [`\\.js$`];
         // if (!config.excludes) config.excludes = [`\\.config\\.js$`, `\\.test\\.js$`];
 
@@ -171,11 +235,11 @@ export default class Validator {
         return `${number}${ext}`;
     }
 
-    static #getType(obj) {
+    static getType(obj) {
         const typeString = {}.toString.call(obj);
         const type = typeString.slice(typeString.indexOf(` `) + 1, -1);
 
-        if (type !== `Object`) return type;
+        if (type !== `Object` && type !== `Error`) return type;
 
         const {name} = obj.constructor;
 
@@ -183,19 +247,22 @@ export default class Validator {
         return type;
     }
 
-    static #isString(value) { return this.#getType(value) === `String` }
+    static isString(value) { return this.getType(value) === `String` }
 
-    static #isNumber(value) { return this.#getType(value) === `Number`; }
+    static isNumber(value) { return this.getType(value) === `Number`; }
 
-    static #isBoolean(value) { return this.#getType(value) === `Boolean`; }
+    static isBoolean(value) { return this.getType(value) === `Boolean`; }
 
-    static #isArray(value) { return this.#getType(value) === `Array`; }
+    static isArray(value) { return this.getType(value) === `Array`; }
 
-    static #isObject(value) { return this.#getType(value) === `Object`; }
+    static isObject(value) { return this.getType(value) === `Object`; }
 
-    static #isFunction(value) { return this.#getType(value) === `Function`; }
+    static isFunction(value) { return this.getType(value) === `Function`; }
 
-    static #isEmpty(value) {
-        return value === `` || value === 0 || value === [] || value === {} || value === null || value === undefined;
+    static isEmpty(value) {
+        if (this.isArray(value)) return JSON.stringify(value) === `[]`;
+        if (this.isObject(value)) return JSON.stringify(value) === `{}`;
+
+        return value === `` || value === 0 || value === null || value === undefined;
     }
 }

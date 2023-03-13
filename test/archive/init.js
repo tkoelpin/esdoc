@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import ESDocCLI from '../src/ESDocCLI.js';
+import ESDocCLI from '../../src/ESDocCLI.js';
 
 export function cli(configPath) {
   const cliPath = path.resolve('./src/cli.js');
