@@ -9,7 +9,7 @@ import ESParser from './Parser/ESParser.js';
 import InvalidCodeLogger from './Util/InvalidCodeLogger.js';
 import PathResolver from './Util/PathResolver.js';
 import Plugin from './Plugin/Plugin.js';
-import Validator from './Util/Validator.js';
+import ConfigValidation from './Validation/ConfigValidation.js';
 
 /**
  * API Documentation Generator.
@@ -25,15 +25,12 @@ export default class ESDoc {
 
     constructor(config) {
         try {
-            Validator.validateConfig(config);
+            ConfigValidation.validate(config);
             this.#config = config;
         } catch (e) {
             ColorLogger.err(e.message);
         }
     }
-
-    
-    #validateConfig(config) {}
 
     /**
      * Generate documentation.

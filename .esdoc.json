@@ -1,9 +1,8 @@
 {
   "source": "./src",
   "destination": "./out/docs",
-  "includes": [""],
+  "includes": [],
   "excludes": ["Publisher/Builder/template/"],
-  "debug": false,
   "index": "./README.md",
   "package": "./package.json",
   "plugins": [

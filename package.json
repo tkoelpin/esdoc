@@ -22,20 +22,20 @@
     "lint": "node ./script/eslint.js"
   },
   "dependencies": {
-    "@babel/generator": "^7.21.1",
-    "@babel/parser": "^7.21.2",
-    "@babel/traverse": "^7.21.2",
+    "@babel/generator": "^7.21.4",
+    "@babel/parser": "^7.21.4",
+    "@babel/traverse": "^7.21.4",
     "cheerio": "1.0.0-rc.12",
     "color-logger": "0.0.6",
     "escape-html": "1.0.3",
     "ice-cap": "0.0.4",
-    "marked": "4.2.12",
+    "marked": "4.3.0",
     "minimist": "1.2.8",
     "taffydb": "2.7.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-env": "^7.21.4",
     "@babel/register": "^7.21.0",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
@@ -46,8 +46,8 @@
     "esdoc-importpath-plugin": "^1.0.2",
     "esdoc-standard-plugin": "latest",
     "esdoc-undocumented-identifier-plugin": "latest",
-    "eslint": "8.36.0",
-    "jscpd": "^3.5.3",
+    "eslint": "8.38.0",
+    "jscpd": "^3.5.4",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0"
   },
@@ -82,5 +82,16 @@
   "main": "dist/src/ESDoc.js",
   "bin": {
     "esdoc": "dist/src/ESDocCLI.js"
+  },
+  "mocha": {
+    "diff": true,
+    "extension": ["js", "cjs", "mjs"],
+    "package": "./package.json",
+    "reporter": "spec",
+    "slow": "75",
+    "timeout": "2000",
+    "ui": "bdd",
+    "watch-files": ["test/**/*.js"],
+    "watch-ignore": []
   }
 }
